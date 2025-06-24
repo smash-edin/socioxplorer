@@ -1,0 +1,135 @@
+# ================================
+# DEPENDENCIES & PACKAGE MANAGERS
+# ================================
+node_modules/
+**/node_modules/
+/.pnp
+.pnp.js
+package-lock.json
+yarn.lock
+yarn-debug.log*
+yarn-error.log*
+npm-debug.log*
+
+# ================================
+# PYTHON VIRTUAL ENVIRONMENTS
+# ================================
+venv/
+venv_test1/
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# ================================
+# BUILD & PRODUCTION
+# ================================
+/build/
+/dist/
+/coverage/
+
+# ================================
+# IDE & EDITOR FILES
+# ================================
+.vscode/
+**/.vscode/
+.idea/
+**/.idea/
+
+# ================================
+# OPERATING SYSTEM FILES
+# ================================
+.DS_Store
+**/.DS_Store
+Thumbs.db
+*.tmp
+*.temp
+
+# ================================
+# LOGS & TEMPORARY FILES
+# ================================
+*.log
+.log/
+**/.log/
+**/*.backup
+**/processing_requests.json
+**/status_dailybatches_twitter.tmp
+
+# ================================
+# JUPYTER NOTEBOOKS & DATA SCIENCE
+# ================================
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+**/*.ipynb
+
+# ================================
+# DATA & CACHE DIRECTORIES
+# ================================
+data/
+**/data/
+data_backup/
+**/sentence_embeddings/data/
+**/sentence_embeddings/data_backup/
+cached_tweets/
+**/instance/
+
+# ================================
+# ML MODELS & EMBEDDERS
+# ================================
+embedder/
+embedder_2D/
+**/embedder/
+**/embedder_2D/
+/sentence_embeddings/2d_embedder/
+/sentence_embeddings/5d_embedder/
+**/sentence_embeddings/embedder/
+/sentence_embeddings/embedder_2D/
+
+# Pre-trained models
+all-mpnet-base-v2/
+paraphrase-MiniLM-L6-v2/
+twitter-xlm-roberta-base-sentiment/
+
+# ================================
+# NLP & SENTIMENT ANALYSIS
+# ================================
+/sentiment_api/cardiffnlp/
+/sentiment_api/stanfordnlp/
+
+# ================================
+# NETWORK ANALYSIS
+# ================================
+/network_interaction/*.class
+Main.class*
+GephiVis.class*
+
+# ================================
+# PROJECT SPECIFIC FILES
+# ================================
+/.assets/lid.176.bin
+/api/notebooks/
+/configs.py_backup
+/solr_class.py.backup
+requirements_new.txt
+run_server.sh
+
+# ================================
+# ENVIRONMENT & CONFIG FILES
+# ================================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.flaskenv
+.queries
+
+# ================================
+# SSL CERTIFICATES
+# ================================
+cert.pem
+key.pem
+*.pem
+*.key
+*.crt

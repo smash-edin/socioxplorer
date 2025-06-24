@@ -1,0 +1,445 @@
+{
+   "data": [
+       {
+           "author_id": "2244994945",
+           "created_at": "2020-06-11T16:05:06.000Z",
+           "id": "1271111223220809728",
+           "text": "Tune in tonight and watch as @jessicagarson takes us through running your favorite Python package in R. 🍿\n\nLearn how to use two powerful programming languages for data science together, and see a live example that uses the recent search endpoint from Twitter’s Developer Labs. https://t.co/v178oUZNuj",
+           "lang": "en",
+           "possibly_sensitive": false,
+           "public_metrics": {
+             "retweet_count": 12,
+             "reply_count": 2,
+             "like_count": 42,
+             "quote_count": 0
+           }
+       },
+       {
+           "author_id": "2244994945",
+           "created_at": "2020-06-10T19:25:24.000Z",
+           "id": "1270799243071062016",
+           "text": "As we work towards building the new Twitter API, we’ve extended the deprecation timeline for several Labs v1 endpoints. Learn more 📖 https://t.co/rRWaJYJgKk",
+           "lang": "en",
+           "possibly_sensitive": false,
+           "public_metrics": {
+             "retweet_count": 3,
+             "reply_count": 8,
+             "like_count": 31,
+             "quote_count": 0
+           }
+       },
+       {
+           "author_id": "2244994945",
+           "created_at": "2020-06-09T18:08:47.000Z",
+           "id": "1270417572001976322",
+           "text": "Annotations help you learn more about a Tweet — they can even help you find topics of interest. 🔬\n\nIn this tutorial, @suhemparack shows us how find Tweets related to COVID-19 using annotations + the filtered stream endpoint.\n\nLearn how you can, too. ⤵️\nhttps://t.co/qwVOgw0zSV",
+           "lang": "en",
+           "possibly_sensitive": false,
+           "public_metrics": {
+             "retweet_count": 11,
+             "reply_count": 1,
+             "like_count": 40,
+             "quote_count": 0
+           }
+       }
+   ],
+   "includes": {
+       "users": [
+           {
+               "description": "The voice of Twitter's #DevRel team, and your official source for updates, news, & events about Twitter's API. \n\n#BlackLivesMatter",
+               "id": "2244994945",
+               "name": "Twitter Dev",
+               "username": "TwitterDev"
+           }
+       ]
+   },
+   "meta": {
+       "newest_id": "1271111223220809728",
+       "oldest_id": "1270417572001976322",
+       "result_count": 3
+   }
+}
+{
+ "data": {
+   "author_id": "2244994945",
+   "context_annotations": [
+     {
+       "domain": {
+         "id": "46",
+         "name": "Brand Category",
+         "description": "Categories within Brand Verticals that narrow down the scope of Brands"
+       },
+       "entity": {
+         "id": "781974596752842752",
+         "name": "Services"
+       }
+     },
+     {
+       "domain": {
+         "id": "47",
+         "name": "Brand",
+         "description": "Brands and Companies"
+       },
+       "entity": {
+         "id": "10045225402",
+         "name": "Twitter"
+       }
+     },
+     {
+       "domain": {
+         "id": "65",
+         "name": "Interests and Hobbies Vertical",
+         "description": "Top level interests and hobbies groupings, like Food or Travel"
+       },
+       "entity": {
+         "id": "848920371311001600",
+         "name": "Technology",
+         "description": "Technology and computing"
+       }
+     },
+     {
+       "domain": {
+         "id": "66",
+         "name": "Interests and Hobbies Category",
+         "description": "A grouping of interests and hobbies entities, like Novelty Food or Destinations"
+       },
+       "entity": {
+         "id": "848921413196984320",
+         "name": "Computer programming",
+         "description": "Computer programming"
+       }
+     }
+   ],
+   "created_at": "2020-07-02T17:48:57.000Z",
+   "entities": {
+     "annotations": [
+       {
+         "start": 23,
+         "end": 29,
+         "probability": 0.4636,
+         "type": "Organization",
+         "normalized_text": "Twitter"
+       }
+     ],
+     "hashtags": [
+       {
+         "start": 106,
+         "end": 117,
+         "tag": "TwitterAPI"
+       }
+     ],
+     "urls": [
+       {
+         "start": 188,
+         "end": 211,
+         "url": "https://t.co/WvjuEWCa6G",
+         "expanded_url": "https://blog.twitter.com/developer/en_us/topics/tools/2020/a-year-with-twitter-developer-labs.html",
+         "display_url": "blog.twitter.com/developer/en_u…",
+         "images": [
+           {
+             "url": "https://pbs.twimg.com/news_img/1278747527043362816/7HQRkQeV?format=jpg&name=orig",
+             "width": 1600,
+             "height": 600
+           },
+           {
+             "url": "https://pbs.twimg.com/news_img/1278747527043362816/7HQRkQeV?format=jpg&name=150x150",
+             "width": 150,
+             "height": 150
+           }
+         ],
+         "status": 200,
+         "title": "A year with Twitter Developer Labs: What we've learned and changed",
+         "description": "Labs has been invaluable in helping us understand what works well and what doesn’t, what you liked and what you didn’t.",
+         "unwound_url": "https://blog.twitter.com/developer/en_us/topics/tools/2020/a-year-with-twitter-developer-labs.html"
+       }
+     ]
+   },
+   "id": "1278747501642657792",
+   "lang": "en",
+   "possibly_sensitive": false,
+   "public_metrics": {
+     "retweet_count": 64,
+     "reply_count": 13,
+     "like_count": 148,
+     "quote_count": 19
+   },
+   "source": "Twitter Web App",
+   "text": "It's been a year since Twitter's Developer Labs launched.\n\nAs we build towards the next generation of the #TwitterAPI (coming VERY soon), see what we've learned and changed along the way. https://t.co/WvjuEWCa6G"
+ },
+ "includes": {
+   "users": [
+     {
+       "created_at": "2013-12-14T04:35:55.000Z",
+       "description": "The voice of Twitter's #DevRel team, and your official source for updates, news, & events about Twitter's API. \n\n#BlackLivesMatter",
+       "entities": {
+         "url": {
+           "urls": [
+             {
+               "start": 0,
+               "end": 23,
+               "url": "https://t.co/3ZX3TNiZCY",
+               "expanded_url": "https://developer.twitter.com/en/community",
+               "display_url": "developer.twitter.com/en/community"
+             }
+           ]
+         },
+         "description": {
+           "hashtags": [
+             {
+               "start": 23,
+               "end": 30,
+               "tag": "DevRel"
+             },
+             {
+               "start": 113,
+               "end": 130,
+               "tag": "BlackLivesMatter"
+             }
+           ]
+         }
+       },
+       "id": "2244994945",
+       "location": "127.0.0.1",
+       "name": "Twitter Dev",
+       "pinned_tweet_id": "1255542774432063488",
+       "profile_image_url": "https://pbs.twimg.com/profile_images/1267175364003901441/tBZNFAgA_normal.jpg",
+       "protected": false,
+       "public_metrics": {
+         "followers_count": 507830,
+         "following_count": 1867,
+         "tweet_count": 3565,
+         "listed_count": 1562
+       },
+       "url": "https://t.co/3ZX3TNiZCY",
+       "username": "TwitterDev",
+       "verified": true
+     }
+   ]
+ }
+}
+{
+   "data": {
+       "author_id": "2244994945",
+       "context_annotations": [
+           {
+               "domain": {
+                   "id": "123",
+                   "name": "Ongoing News Story",
+                   "description": "Ongoing News Stories like 'Brexit'"
+               },
+               "entity": {
+                   "id": "1220701888179359745",
+                   "name": "COVID-19"
+               }
+           },
+           {
+               "domain": {
+                   "id": "65",
+                   "name": "Interests and Hobbies Vertical",
+                   "description": "Top level interests and hobbies groupings, like Food or Travel"
+               },
+               "entity": {
+                   "id": "848920371311001600",
+                   "name": "Technology",
+                   "description": "Technology and computing"
+               }
+           },
+           {
+               "domain": {
+                   "id": "66",
+                   "name": "Interests and Hobbies Category",
+                   "description": "A grouping of interests and hobbies entities, like Novelty Food or Destinations"
+               },
+               "entity": {
+                   "id": "848921413196984320",
+                   "name": "Computer programming",
+                   "description": "Computer programming"
+               }
+           }
+       ],
+       "created_at": "2020-04-29T17:01:40.000Z",
+       "entities": {
+           "urls": [
+               {
+                   "start": 243,
+                   "end": 266,
+                   "url": "https://t.co/j725kKXuXs",
+                   "expanded_url": "https://docs.google.com/forms/d/e/1FAIpQLSdX3znRD87_j1E3aOUHAZtxzJfHwXzpFPKZTBiB90_9vJLscA/viewform",
+                   "display_url": "docs.google.com/forms/d/e/1FAI…",
+                   "images": [
+                       {
+                           "url": "https://pbs.twimg.com/news_img/1269516220459515905/TZm5wJPQ?format=jpg&name=orig",
+                           "width": 1200,
+                           "height": 630
+                       },
+                       {
+                           "url": "https://pbs.twimg.com/news_img/1269516220459515905/TZm5wJPQ?format=jpg&name=150x150",
+                           "width": 150,
+                           "height": 150
+                       }
+                   ],
+                   "status": 200,
+                   "title": "Twitter COVID-19 data application",
+                   "description": "Please complete this form to apply for access to the COVID-19 stream endpoint. As the conversation around this topic has surged in recent weeks, this dataset is notably large and requires experience working with Twitter data and substantial infrastructure to ingest, process, store, and analyze the volume. Please provide as much detail in English as you can, as this will help speed our review process. Note that we are unable to process applications that do not contain complete and detailed answers to each question listed. Requirements: * You have a Twitter developer account (https://developer.twitter.com/en/portal/petition/essential/basic-info) * You have demonstrable experience working with Twitter data in JSON format * You have a clear plan and ability to support the ingestion, processing, storage, and analysis of streaming data at a scale of tens of millions of Tweets per day * Your project is adherent with our Developer Terms and Restricted Use Cases (https://developer.twitter.com/en/developer-terms) * ",
+                   "unwound_url": "https://docs.google.com/forms/d/e/1FAIpQLSdX3znRD87_j1E3aOUHAZtxzJfHwXzpFPKZTBiB90_9vJLscA/viewform"
+               }
+           ]
+       },
+       "id": "1255542782099255296",
+       "in_reply_to_user_id": "2244994945",
+       "lang": "en",
+       "possibly_sensitive": false,
+       "public_metrics": {
+           "retweet_count": 35,
+           "reply_count": 17,
+           "like_count": 66,
+           "quote_count": 6
+       },
+       "referenced_tweets": [
+           {
+               "type": "replied_to",
+               "id": "1255542774432063488"
+           }
+       ],
+       "source": "Twitter Web App",
+       "text": "The volume of conversation about COVID-19 is tremendous, which means it requires expertise and computational resources to process. \n\nDevelopers and researchers with that capability and intent to support the public good can apply for access. \n\nhttps://t.co/j725kKXuXs"
+   },
+   "includes": {
+       "users": [
+           {
+               "created_at": "2013-12-14T04:35:55.000Z",
+               "description": "The voice of Twitter's #DevRel team, and your official source for updates, news, & events about Twitter's API. \n\n#BlackLivesMatter",
+               "entities": {
+                   "url": {
+                       "urls": [
+                           {
+                               "start": 0,
+                               "end": 23,
+                               "url": "https://t.co/3ZX3TNiZCY",
+                               "expanded_url": "https://developer.twitter.com/en/community",
+                               "display_url": "developer.twitter.com/en/community"
+                           }
+                       ]
+                   },
+                   "description": {
+                       "hashtags": [
+                           {
+                               "start": 23,
+                               "end": 30,
+                               "tag": "DevRel"
+                           },
+                           {
+                               "start": 113,
+                               "end": 130,
+                               "tag": "BlackLivesMatter"
+                           }
+                       ]
+                   }
+               },
+               "id": "2244994945",
+               "location": "127.0.0.1",
+               "name": "Twitter Dev",
+               "pinned_tweet_id": "1255542774432063488",
+               "profile_image_url": "https://pbs.twimg.com/profile_images/1267175364003901441/tBZNFAgA_normal.jpg",
+               "protected": false,
+               "public_metrics": {
+                   "followers_count": 507676,
+                   "following_count": 1863,
+                   "tweet_count": 3563,
+                   "listed_count": 1552
+               },
+               "url": "https://t.co/3ZX3TNiZCY",
+               "username": "TwitterDev",
+               "verified": true
+           }
+       ],
+       "tweets": [
+           {
+               "author_id": "2244994945",
+               "context_annotations": [
+                   {
+                       "domain": {
+                           "id": "123",
+                           "name": "Ongoing News Story",
+                           "description": "Ongoing News Stories like 'Brexit'"
+                       },
+                       "entity": {
+                           "id": "1220701888179359745",
+                           "name": "COVID-19"
+                       }
+                   },
+                   {
+                       "domain": {
+                           "id": "46",
+                           "name": "Brand Category",
+                           "description": "Categories within Brand Verticals that narrow down the scope of Brands"
+                       },
+                       "entity": {
+                           "id": "781974596752842752",
+                           "name": "Services"
+                       }
+                   },
+                   {
+                       "domain": {
+                           "id": "47",
+                           "name": "Brand",
+                           "description": "Brands and Companies"
+                       },
+                       "entity": {
+                           "id": "10045225402",
+                           "name": "Twitter"
+                       }
+                   }
+               ],
+               "created_at": "2020-04-29T17:01:38.000Z",
+               "entities": {
+                   "annotations": [
+                       {
+                           "start": 54,
+                           "end": 60,
+                           "probability": 0.6094,
+                           "type": "Product",
+                           "normalized_text": "Twitter"
+                       }
+                   ],
+                   "urls": [
+                       {
+                           "start": 264,
+                           "end": 287,
+                           "url": "https://t.co/BPqMcQzhId",
+                           "expanded_url": "https://blog.twitter.com/developer/en_us/topics/tools/2020/covid19_public_conversation_data.html",
+                           "display_url": "blog.twitter.com/developer/en_u…",
+                           "images": [
+                               {
+                                   "url": "https://pbs.twimg.com/news_img/1274730688919613440/SEsqlE16?format=jpg&name=orig",
+                                   "width": 1600,
+                                   "height": 600
+                               },
+                               {
+                                   "url": "https://pbs.twimg.com/news_img/1274730688919613440/SEsqlE16?format=jpg&name=150x150",
+                                   "width": 150,
+                                   "height": 150
+                               }
+                           ],
+                           "status": 200,
+                           "title": "Enabling study of the public conversation in a time of crisis",
+                           "description": "To further support our company’s ongoing efforts, we want to enable developers and researchers to study the public conversation on COVID-19 in real-time.",
+                           "unwound_url": "https://blog.twitter.com/developer/en_us/topics/tools/2020/covid19_public_conversation_data.html"
+                       }
+                   ]
+               },
+               "id": "1255542774432063488",
+               "lang": "en",
+               "possibly_sensitive": false,
+               "public_metrics": {
+                   "retweet_count": 327,
+                   "reply_count": 308,
+                   "like_count": 710,
+                   "quote_count": 120
+               },
+               "source": "Twitter Web App",
+               "text": "During these unprecedented times, what’s happening on Twitter can help the world better understand &amp; respond to the pandemic. \n\nWe're launching a free COVID-19 stream endpoint so qualified devs &amp; researchers can study the public conversation in real-time. https://t.co/BPqMcQzhId"
+           }
+       ]
+   }
+}

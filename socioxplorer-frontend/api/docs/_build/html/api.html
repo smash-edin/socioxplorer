@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>API module &#8212; SocioXplorer Dashboard 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
+    <script src="_static/documentation_options.js?v=8d563738"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SolrClass module" href="solr_class.html" />
+    <link rel="prev" title="api" href="modules.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-api">
+<span id="api-module"></span><h1>API module<a class="headerlink" href="#module-api" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="api.analysis">
+<span class="sig-prename descclassname"><span class="pre">api.</span></span><span class="sig-name descname"><span class="pre">analysis</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/api.html#analysis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.analysis" title="Link to this definition">¶</a></dt>
+<dd><p>API endpoint that enables access to the “Analysis” page in the dashboard from cached credentials</p>
+<dl class="simple">
+<dt>Response:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">dict<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Contains the single field “error” with the error message.</p>
+</dd>
+<dt class="field-even">int<span class="colon">:</span></dt>
+<dd class="field-even"><p>Error code.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="api.auth">
+<span class="sig-prename descclassname"><span class="pre">api.</span></span><span class="sig-name descname"><span class="pre">auth</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/api.html#auth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.auth" title="Link to this definition">¶</a></dt>
+<dd><p>API endpoint for public access to the dashboard, simply returns an error message.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">dict<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Contains a single field “error” with a welcome message.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="api.authentication">
+<span class="sig-prename descclassname"><span class="pre">api.</span></span><span class="sig-name descname"><span class="pre">authentication</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/api.html#authentication"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.authentication" title="Link to this definition">¶</a></dt>
+<dd><p>API endpoint that enables the user to log into their personal session (e.g. to save and load reports).</p>
+<dl class="simple">
+<dt>Query fields:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">user<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(str) User’s username.</p>
+</dd>
+<dt class="field-even">pwd<span class="colon">:</span></dt>
+<dd class="field-even"><p>(str) User’s password.</p>
+</dd>
+</dl>
+</dd>
+<dt>Response:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">tuple<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Contains a dictionary with a status message (under “error” field) and an error code.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="api.get_countries_list">
+<span class="sig-prename descclassname"><span class="pre">api.</span></span><span class="sig-name descname"><span class="pre">get_countries_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/api.html#get_countries_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.get_countries_list" title="Link to this definition">¶</a></dt>
+<dd><p>API endpoint that returns the list of valid countries (stored on file) for location graph.</p>
+<dl class="simple">
+<dt>Response:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">dict<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Jsonified CSV file with list of countries with their codes.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="api.get_languages_list">
+<span class="sig-prename descclassname"><span class="pre">api.</span></span><span class="sig-name descname"><span class="pre">get_languages_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/api.html#get_languages_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.get_languages_list" title="Link to this definition">¶</a></dt>
+<dd><p>API endpoint that returns the list of valid languages (stored on file) for language graph.</p>
+<dl class="simple">
+<dt>Response:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">dict<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Jsonified list of languages.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="api.load_login">
+<span class="sig-prename descclassname"><span class="pre">api.</span></span><span class="sig-name descname"><span class="pre">load_login</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/api.html#load_login"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.load_login" title="Link to this definition">¶</a></dt>
+<dd><p>API endpoint that launches the authentication process. If an existing user session is active, the login is     performed automatically. Otherwise, front-end is notified that the user needs to log in.</p>
+<dl class="simple">
+<dt>Response:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">tuple<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Contains a dictionary with the bearer’s access token (if login is successful) or appropriate             error message otherwise, and an error code.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="api.logout">
+<span class="sig-prename descclassname"><span class="pre">api.</span></span><span class="sig-name descname"><span class="pre">logout</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/api.html#logout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.logout" title="Link to this definition">¶</a></dt>
+<dd><p>API endpoint to log out user from their personal session.</p>
+<dl class="simple">
+<dt>Query fields:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">accessToken<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(str) User’s access token.</p>
+</dd>
+</dl>
+</dd>
+<dt>Response:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">tuple<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Contains a dictionary with a status message (under “Message” field) and an error code.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="api.refresh_session">
+<span class="sig-prename descclassname"><span class="pre">api.</span></span><span class="sig-name descname"><span class="pre">refresh_session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/api.html#refresh_session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.refresh_session" title="Link to this definition">¶</a></dt>
+<dd><p>Function to refresh access to the user session if logged in and active (i.e. delay expiration of session).</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">dict<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Contains an “accessToken” and a “username” field.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="api.register_user">
+<span class="sig-prename descclassname"><span class="pre">api.</span></span><span class="sig-name descname"><span class="pre">register_user</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/api.html#register_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.register_user" title="Link to this definition">¶</a></dt>
+<dd><p>API endpoint to register a new user.</p>
+<dl class="simple">
+<dt>Query fields</dt><dd><dl class="field-list simple">
+<dt class="field-odd">user<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(str) User’s username.</p>
+</dd>
+<dt class="field-even">pwd<span class="colon">:</span></dt>
+<dd class="field-even"><p>(str) User’s password.</p>
+</dd>
+</dl>
+</dd>
+<dt>Response</dt><dd><dl class="field-list simple">
+<dt class="field-odd">dict or tuple<span class="colon">:</span></dt>
+<dd class="field-odd"><p>If registration is successful, returns a dictionary with an “id” (the new user’s ID) and a “username”             field. Otherwise, return a dictionary containing the “error” field (error message) and an error code.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="api.search">
+<span class="sig-prename descclassname"><span class="pre">api.</span></span><span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/api.html#search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.search" title="Link to this definition">¶</a></dt>
+<dd><p>API endpoint that returns the relevant data from Solr for the main report.</p>
+<dl class="simple">
+<dt>Query fields:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">source<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(str) Dataset to query from in Solr.</p>
+</dd>
+<dt class="field-even">date_start<span class="colon">:</span></dt>
+<dd class="field-even"><p>(str) Start of the date range (format YYYY-MM-DD, by default “”).</p>
+</dd>
+<dt class="field-odd">date_end<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(str) End of the date range (format YYYY-MM-DD, by default “”).</p>
+</dd>
+<dt class="field-even">keywords<span class="colon">:</span></dt>
+<dd class="field-even"><p>(str) Comma-separated list of keywords to match in text (e.g. “keyword1, keyword2”, by default “”).</p>
+</dd>
+<dt class="field-odd">operator<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(str) Determines whether to retrieve data that matches all keywords (“AND”) or at least one of the             keywords (“OR”, by default “OR”).</p>
+</dd>
+<dt class="field-even">nb_topics<span class="colon">:</span></dt>
+<dd class="field-even"><p>(int) Number of cluster to group data into in Topic Discovery module.</p>
+</dd>
+<dt class="field-odd">claim<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(str) Claim to be projected into the data in Topic Discovery module.</p>
+</dd>
+<dt class="field-even">random_seed<span class="colon">:</span></dt>
+<dd class="field-even"><p>(int) Random seed to make random selection of data in Topic Discovery Module (i.e. when volume is             greater than 100K) deterministic.</p>
+</dd>
+</dl>
+</dd>
+<dt>Response:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">hits<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(int) Total volume of tweets that matched the query.</p>
+</dd>
+<dt class="field-even">show_report<span class="colon">:</span></dt>
+<dd class="field-even"><p>(bool) Whether the query was successful (i.e. results were found), defines if report should be           shown in front-end.</p>
+</dd>
+<dt class="field-odd">dataSource<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(str) Dataset queried from in Solr.</p>
+</dd>
+<dt class="field-even">source_text<span class="colon">:</span></dt>
+<dd class="field-even"><p>(str) Display name of dataset queried from in Solr.</p>
+</dd>
+<dt class="field-odd">operator<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(str) Determines whether data retrieved matched all keywords at once (“AND”) or at least one of the             keywords (“OR”, by default “OR”).</p>
+</dd>
+<dt class="field-even">report<span class="colon">:</span></dt>
+<dd class="field-even"><p>(dict) The report contains a different entry for each keyword from the query. This entry is itself a             dictionary with the following fields:</p>
+<ul class="simple">
+<li><p>count: (int) Number of datapoints that match this keyword</p></li>
+<li><p>mentions: (dict[list]) Number of mentions per user, faceted by sentiment (i.e. of the text)</p></li>
+<li><p>retweeted: (dict[list]) Number of retweets by user, faceted by sentiment (i.e. of the text)</p></li>
+<li><p>retweeters: (dict[list]) Number of retweets per user, faceted by sentiment (i.e. of the text)</p></li>
+<li><p>Languages_Distributions: (list[dict]) Number of tweets per language. Each dictionary contains a “Count”               and “Language” field</p></li>
+<li><p>tweets_languages_by_sentiments: (dict[list]) Number of tweets per day, faceted by sentiment and language</p></li>
+<li><p>Sentiment_per_language: (dict[list]) Number of tweets per language, faceted by sentiment</p></li>
+<li><p>Sentiments_Distributions: (dict[list]) Number of tweets per day, faceted by sentiment</p></li>
+<li><p>emojis: (dict[list]) Count per emoji, faceted by sentiment</p></li>
+<li><p>media: (dict[list]) Count per media URL, faceted by sentiment</p></li>
+<li><p>top_tweets: (dict[list]) Top 10K most retweeted tweets in dataset per sentiment, with id, date of               publication, text, language, location and retweet count</p></li>
+<li><p>top_users: (dict[list]) Top 10K most retweeted users in dataset per sentiment, with user ID, screenname,               description, language, location and retweet count</p></li>
+<li><p>urls: (dict[list]) Count per URL, faceted by sentiment</p></li>
+<li><p>userScreenName: (dict[list]) Count per user screenname, faceted by sentiment</p></li>
+<li><p>hashtags: (dict[list]) Count per hashtag, faceted by sentiment</p></li>
+<li><p>processedDescTokens: (dict[list]) Count per word from user descriptions, faceted by sentiment</p></li>
+<li><p>processedTokens: (dict[list]) Count per word from text, faceted by sentiment</p></li>
+<li><p>traffic: (list[dict]) Number of tweets per day. Each dictionary contains a “Count” and “Date” field</p></li>
+<li><p>users_locations_by_languages: (dict[list]) Number of users per region, faceted by language</p></li>
+<li><p>users_locations_by_sentiments: (dict[list]) Number of users per region, faceted by sentiment</p></li>
+<li><p>tweets_locations_by_sentiments: (dict[list]) Number of tweets per region, faceted by sentiment</p></li>
+<li><p>tweets_locations_by_languages: (dict[list]) Number of tweets per region, faceted by language</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="api.topic_modelling">
+<span class="sig-prename descclassname"><span class="pre">api.</span></span><span class="sig-name descname"><span class="pre">topic_modelling</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/api.html#topic_modelling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#api.topic_modelling" title="Link to this definition">¶</a></dt>
+<dd><p>API endpoint that returns relevant information for the Topic Discovery scatter plots and topic wordclouds.</p>
+<dl class="simple">
+<dt>Query fields:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">source<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(str) Dataset to query from in Solr.</p>
+</dd>
+<dt class="field-even">date_start<span class="colon">:</span></dt>
+<dd class="field-even"><p>(str) Start of the date range (format YYYY-MM-DD, by default “”).</p>
+</dd>
+<dt class="field-odd">date_end<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(str) End of the date range (format YYYY-MM-DD, by default “”).</p>
+</dd>
+<dt class="field-even">keywords<span class="colon">:</span></dt>
+<dd class="field-even"><p>(list[str]) List of keywords to match in text.</p>
+</dd>
+<dt class="field-odd">operator<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(str) Determines whether to retrieve data that matches all keywords (“AND”) or at least one of the             keywords (“OR”, by default “OR”).</p>
+</dd>
+<dt class="field-even">nb_topics<span class="colon">:</span></dt>
+<dd class="field-even"><p>(int) Number of cluster to group data into.</p>
+</dd>
+<dt class="field-odd">claim<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(str) Claim to be projected into the same multi-dimensional space as the data.</p>
+</dd>
+<dt class="field-even">random_seed<span class="colon">:</span></dt>
+<dd class="field-even"><p>(int) Random seed to make random selection of data (i.e. when volume is greater than 100K)             deterministic.</p>
+</dd>
+</dl>
+</dd>
+<dt>Output:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">figures<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(dict[dict[bokeh.plotting.figure]]) Bokeh figures per keyword (outter dict) and sentiment             (inner dict).</p>
+</dd>
+<dt class="field-even">top_words<span class="colon">:</span></dt>
+<dd class="field-even"><p>(dict[dict[list]]) Words with the greatest TF-IDF per keyword (outter dict) and sentiment (inner             dict). Each element in the inner dict is a list of dictionaries, with a “text” (str, the word) and “value”             (float, TF-IDF value) field.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SocioXplorer Dashboard</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">api</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">API module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="solr_class.html">SolrClass module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="topic_modelling_utils.html">Topic Modelling Utils module</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">api</a><ul>
+      <li>Previous: <a href="modules.html" title="previous chapter">api</a></li>
+      <li>Next: <a href="solr_class.html" title="next chapter">SolrClass module</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Sandrine Chausson, Youssef Al Hariri, Bjorn Ross.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/api.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

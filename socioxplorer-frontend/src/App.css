@@ -1,0 +1,649 @@
+.App {
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+
+.PageTitle {
+    /*font-size: calc(12px + 2vmin);*/
+    margin-top: 50px;
+    margin-bottom: 20px;
+}
+
+.Input {
+    background-color: #f5f2f1;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: space-around;
+    color: #282c34;
+}
+
+.InputFields {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    align-items: flex-start;
+    width: 650px;
+    margin-bottom: 20px;
+}
+
+.AdminPanes {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    align-items: flex-start;
+    width: 830px;
+    margin-bottom: 20px;
+}
+.KeywordsInput {
+    width: 100%;
+}
+
+.OperatorChoice {
+    color: #ffffff;
+    margin-right: 20px;
+}
+
+.OperatorButtonGroup {
+    width: 400px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    /*margin-bottom: 10px;*/
+    margin-top: 5px;
+}
+
+.ButtonGroup {
+    width: 595px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    margin-top: 5px;
+}
+
+.SourceGroup {
+    display: flex;
+    flex-direction: row;
+    margin-top: 30px;
+    width: 300px;
+    justify-content: space-between;
+}
+
+.DatePickerGroup {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    /*justify-content: space-between;*/
+    margin-top: 5px;
+}
+
+
+.DatePicker {
+    width: 210px;
+    margin-left: 20px;
+    margin-right: 100px;
+}
+
+.DropDownGroup {
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin-top: 30px;
+    justify-self: center;
+    /*margin-right: 50px;*/
+}
+
+
+.BaselineButtonGroup {
+    width: 200px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.OffsetGroup {
+    width: 500px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 5px;
+}
+
+.Offset {
+    display: flex;
+    flex-direction: row;
+}
+
+.OffsetLabel {
+    margin-right: 10px;
+}
+
+.OffsetLabelDisabled {
+    margin-right: 10px;
+    color: grey;
+}
+
+.OffsetInput {
+    width: 50px;
+}
+
+.SubmitButton {
+    align-self: center;
+    margin-top: 20px;
+}
+
+.PageBody {
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    flex-direction: column;
+    padding-bottom: 50px;
+}
+
+.ErrorMessage {
+    font-family: Courier, monospace;
+    background-color: #ffe0de;
+    width: 75%;
+    align-self: center;
+    padding: 20px;
+    text-align: center;
+    margin: 30px;
+}
+
+.OffsetEstimate {
+    font-family: Courier, monospace;
+    background-color: #e0e2e3;
+    width: 75%;
+    align-self: center;
+    padding: 20px;
+    text-align: center;
+    color: #747575;
+    margin-top: 20px;
+}
+
+.OffsetEstimateDisabled {
+    font-family: Courier, monospace;
+    background-color: #ebebe9;
+    width: 75%;
+    align-self: center;
+    padding: 20px;
+    text-align: center;
+    color: #8c8b8b;
+    margin-top: 20px;
+}
+
+.FrequencyGraph {
+    align-self: center;
+    width: 500px;
+}
+
+.WordCloudContainer {
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.primary-nav {
+    height: 60px;
+    width: 100%;
+    display: flex;
+    justify-items: center;
+    align-items: center;
+    position: relative;
+    padding: 1rem 5rem;
+    background-color: #fff;
+    color: black;
+    box-shadow: 0 2px 2px 2px rgba(9, 9, 9, 0.23);
+}
+
+.navigation-menu ul {
+    position: absolute;
+    top: 60px;
+    left: 0;
+    flex-direction: column;
+    width: 100%;
+    height: calc(100vh - 77px);
+    background-color: white;
+    border-top: 1px solid black;
+}
+
+.navigation-menu li {
+    text-align: center;
+    margin: 0;
+}
+
+.navigation-menu li a {
+    color: black;
+    width: 100%;
+    padding: 1.5rem 0;
+}
+
+.navigation-menu li:hover {
+    background: #62baea;
+    color: #fff;
+}
+
+/*.App-header {*/
+/*  background-color: #282c34;*/
+/*  min-height: 100vh;*/
+/*  display: flex;*/
+/*  flex-direction: column;*/
+/*  align-items: center;*/
+/*  justify-content: center;*/
+/*  font-size: calc(10px + 2vmin);*/
+/*  color: white;*/
+/*}*/
+
+/*.App-link {*/
+/*  color: #61dafb;*/
+/*}*/
+
+/*@keyframes App-logo-spin {*/
+/*  from {*/
+/*    transform: rotate(0deg);*/
+/*  }*/
+/*  to {*/
+/*    transform: rotate(360deg);*/
+/*  }*/
+/*}*/
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+
+.dropdown::before {
+    content: "";
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    z-index: 1000;
+    width: 8px;
+    height: 8px;
+    border: 2px solid #333;
+    border-top: 2px solid #fff;
+    border-right: 2px solid #fff;
+    transform: rotate(-45deg);
+    transition: 0.5s;
+    pointer-events: none;
+}
+
+.dropdown.active::before {
+    top: 22px;
+    transform: rotate(-225deg);
+}
+
+.dropdown .input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    background: #fff;
+    font-size: 1.2em;
+    border: none;
+    outline: none;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    padding: 12px 20px;
+    border-radius: 10px;
+}
+
+.dropdown .options {
+    position: absolute;
+    top: 70px;
+    width: 150px;
+    background: #fff;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    overflow: hidden;
+    display: none;
+}
+
+.dropdown.active .options {
+    display: block;
+}
+
+.dropdown .options div {
+    padding: 12px 20px;
+    cursor: pointer;
+}
+
+.DropDown {
+    width: 40%
+}
+
+.DropDownMenu {
+    width: 160px;
+}
+
+.DropDownMaps {
+    /*width: 290px;*/
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.DropDownTitle {
+    margin-top: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.Visualisation {
+    margin-top: 50px;
+    width: 100%;
+    max-width: 850px;
+}
+
+.TopicModellingVisualisation {
+    margin-top: 50px;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.TopContent {
+    width: 800px;
+    margin-top: 15px;
+}
+
+
+.CappingWarningDisplay {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    margin: 30px;
+}
+
+.CappingWarning {
+    font-family: Courier, monospace;
+    background-color: #F5F5F5;
+    width: 75%;
+    align-self: center;
+    padding: 20px;
+    text-align: center;
+}
+
+.TopicModellingVis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.SNAGraphVis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.SNAGraphVis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.ClusterGenerate {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+}
+
+.NbTopicsInput {
+    margin-right: 15px;
+    width: 120px
+}
+
+.ClaimInput {
+    margin-right: 15px;
+    width: 300px
+}
+
+.hidden {
+    display: none;
+}
+
+.TitleWithPopup {
+    display: flex;
+    flex-direction: row;
+    margin-top: 30px;
+}
+
+.SubTitleWithPopup {
+    display: flex;
+    flex-direction: row;
+}
+
+.ButtonWithPopup {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.MainTitleWithPopup {
+    display: flex;
+    flex-direction: row;
+    margin-top: 30px;
+    justify-content: center;
+}
+
+.StickySummary {
+    background-color: #f4f1f0;
+    display: flex;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    justify-content: center;
+}
+
+.SummaryContainer {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    width: 800px;
+    justify-content: space-around;
+    justify-self: center;
+    align-self: center;
+    align-items: center;
+    height: 40px;
+}
+
+.EmptyStickySummary {
+    background-color: #ffffff;
+    display: flex;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    justify-content: center;
+}
+
+.SummaryItem {
+    flex-direction: row;
+    text-align: center;
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+.SelectionGroup {
+    display: flex;
+    flex-direction: row;
+    width: 650px;
+    justify-content: space-between;
+}
+
+.NbCommunitiesInput {
+    width: 80px;
+}
+
+.js-plotly-plot .plot-container.plotly rect {
+    cursor: pointer;
+}
+
+.js-plotly-plot .plot-container.plotly rect :hover {
+    cursor: pointer;
+}
+
+.Renaming {
+    position:fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index:10000;
+}
+
+.RenamingInner {
+    position: relative;
+    padding: 32px;
+    width: 100%;
+    max-width: 640px;
+    background-color: #FFFFFF;
+}
+
+
+.HelpBody{
+    display: flex;
+    flex-direction: column;
+    width: 1000px;
+    align-self: center;
+    justify-self: center;
+}
+
+.ImageContainer {
+    text-align: center;
+    width: 100%;
+}
+
+.Image {
+    width: 600px;
+    align-self: center;
+    padding-bottom: 20px;
+    align-self: center;
+    align-items: center;
+}
+
+.ImageLarge {
+    width: 800px;
+    align-self: center;
+    padding-bottom: 20px;
+    align-self: center;
+    align-items: center;
+}
+
+.SmallImage {
+    width: 300px;
+    align-self: center;
+    padding-bottom: 20px;
+    align-self: center;
+    align-items: center;
+}
+
+.MediumImage {
+    width: 400px;
+    align-self: center;
+    padding-bottom: 20px;
+    align-self: center;
+    align-items: center;
+}
+
+.Paragraph {
+    font-size: 18px;
+}
+
+.h3Title {
+    font-size: 22px;
+}
+
+.mainContainer {
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50vh;
+  }
+  
+  .titleContainer {
+    display: flex;
+    flex-direction: column;
+    font-size: 34px;
+    font-weight: bolder;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .resultContainer,
+  .historyItem {
+    flex-direction: row;
+    display: flex;
+    width: 400px;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .historyContainer {
+    flex-direction: column;
+    display: flex;
+    height: 200px;
+    align-items: center;
+    flex-grow: 5;
+    justify-content: flex-start;
+  }
+  
+  .buttonContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 260px;
+  }
+  
+  .inputContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  
+  .inputContainer > .errorLabel {
+    color: red;
+    font-size: 12px;
+  }
+
+  .inputContainer > .messageLabel {
+    color: green;
+    font-size: 12px;
+  }
+  
+  .inputBox {
+    height: 48px;
+    width: 400px;
+    font-size: large;
+    border-radius: 8px;
+    border: 1px solid grey;
+    padding-left: 8px;
+  }
+  .inputBbutton {
+    border: none;
+    background: cornflowerblue;
+    color: white;
+    padding: 12px 24px;
+    margin: 8px;
+    font-size: 24px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .ButtonNormal {}

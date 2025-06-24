@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>SolrClass module &#8212; SocioXplorer Dashboard 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
+    <script src="_static/documentation_options.js?v=8d563738"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Topic Modelling Utils module" href="topic_modelling_utils.html" />
+    <link rel="prev" title="API module" href="api.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-solr_class">
+<span id="solrclass-module"></span><h1>SolrClass module<a class="headerlink" href="#module-solr_class" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="solr_class.SolrClass">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">solr_class.</span></span><span class="sig-name descname"><span class="pre">SolrClass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keywords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/solr_class.html#SolrClass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#solr_class.SolrClass" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class containing the code that interfaces with the Solr cores in order to retrieve relevant data.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="solr_class.SolrClass.check_date_entry">
+<span class="sig-name descname"><span class="pre">check_date_entry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'T00:00:00Z'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/solr_class.html#SolrClass.check_date_entry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#solr_class.SolrClass.check_date_entry" title="Link to this definition">¶</a></dt>
+<dd><p>An auxiliary function that checks if the date is valid or not.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">date_text<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(str) The date to be checked.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">bool<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the date is valid, False otherwise.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="solr_class.SolrClass.combine_all_sentiments">
+<span class="sig-name descname"><span class="pre">combine_all_sentiments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">report_groups</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/solr_class.html#SolrClass.combine_all_sentiments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#solr_class.SolrClass.combine_all_sentiments" title="Link to this definition">¶</a></dt>
+<dd><p>An auxiliary function that combines all sentiments into one group. It is used to compute the top users and         top tweets for all sentiments.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">report_groups<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(dict) Dictionary of the sentiments and the corresponding users and tweets.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">tuple[dict]<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Reports of the top users and top tweets for all sentiments combined.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="solr_class.SolrClass.compute_positive_negative">
+<span class="sig-name descname"><span class="pre">compute_positive_negative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">report_object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/solr_class.html#SolrClass.compute_positive_negative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#solr_class.SolrClass.compute_positive_negative" title="Link to this definition">¶</a></dt>
+<dd><p>A function that computes the positive and negative sentiments for a given feature. It then sorts the         resulted dicts with their mapped names based on the top_n by calling the function sort_dict_with_names.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">report_object<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(dict[dict]) Part of the report object that holds the sentiments for each feature.</p>
+</dd>
+<dt class="field-even">feature<span class="colon">:</span></dt>
+<dd class="field-even"><p>(str) Feature name, used to determine the type of the feature and the corresponding                 computation for the Negative_Positive component.</p>
+</dd>
+<dt class="field-odd">top_n<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(int) Length of the returned list of each sorted items.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="solr_class.SolrClass.create_facet">
+<span class="sig-name descname"><span class="pre">create_facet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limit</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/solr_class.html#SolrClass.create_facet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#solr_class.SolrClass.create_facet" title="Link to this definition">¶</a></dt>
+<dd><p>An auxiliary function that creates the facet json for the query.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">limit<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(int) Maximum size of the retrieved data from Solr.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">dict<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary with the required fields per facet to query the Solr core.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="solr_class.SolrClass.get_all_languages">
+<span class="sig-name descname"><span class="pre">get_all_languages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">report_object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/solr_class.html#SolrClass.get_all_languages"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#solr_class.SolrClass.get_all_languages" title="Link to this definition">¶</a></dt>
+<dd><p>A function that computes the languages for all sentiments. It then sorts the resulted dicts with their mapped names based on the top_n by calling the function sort_dict_with_names.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">report_object<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(dict[dict]) Part of the report that holds the languages for each sentiment.</p>
+</dd>
+<dt class="field-even">top_n<span class="colon">:</span></dt>
+<dd class="field-even"><p>(int) Length of the returned list of each sorted items.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="solr_class.SolrClass.get_maximum">
+<span class="sig-name descname"><span class="pre">get_maximum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">report_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sentiment</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/solr_class.html#SolrClass.get_maximum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#solr_class.SolrClass.get_maximum" title="Link to this definition">¶</a></dt>
+<dd><p>An auxiliary function that gets the maximum value of the retweet count for the top field type (which would         be users or tweets).</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">report_obj<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(dict) Dictionary containing the reported tweets and users.</p>
+</dd>
+<dt class="field-even">item_field<span class="colon">:</span></dt>
+<dd class="field-even"><p>(str) Field’s type (“users” or “tweets”).</p>
+</dd>
+<dt class="field-odd">sentiment<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(str) Sentiment (positive, negative, or neutral).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="solr_class.SolrClass.get_term_list_from_keywords">
+<span class="sig-name descname"><span class="pre">get_term_list_from_keywords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/solr_class.html#SolrClass.get_term_list_from_keywords"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#solr_class.SolrClass.get_term_list_from_keywords" title="Link to this definition">¶</a></dt>
+<dd><p>A function that takes the keywords and returns a list of the keywords/phrases after removing the special         characters and replacing the spaces with the character %20.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">keywords<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(str) The set of words that the user wants to query separated by comma (,). For the combined                 words we expect the query to be separated with a space.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">list<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The list of unique tokens/phrases.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="solr_class.SolrClass.normalize_sentiments">
+<span class="sig-name descname"><span class="pre">normalize_sentiments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sub_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/solr_class.html#SolrClass.normalize_sentiments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#solr_class.SolrClass.normalize_sentiments" title="Link to this definition">¶</a></dt>
+<dd><p>A function that normalizes the sentiments to be between -1 and 1.         The normalisation is done based on the equation:          ( -1 * COUNT(NEG) + 0 * COUNT(NEUT) + 1 * COUNT(POS)) / (COUNT(NEG) + COUNT(NEUT) + COUNT(POS))        However, to invest the already computed values, the equation is simplified to: sub_value / total_value … in         which, the sub_value is the sum of the positive and negative sentiments and the total_value is the sum of all         sentiments.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">sub_value<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(int) Total counts for both the positive and negative sentiments.</p>
+</dd>
+<dt class="field-even">total_value<span class="colon">:</span></dt>
+<dd class="field-even"><p>(int) Total counts for all sentiments.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">long<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Normalized value in range [-1;1] inclusive.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="solr_class.SolrClass.optimised_json_query_handler">
+<span class="sig-name descname"><span class="pre">optimised_json_query_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solr_core</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">250</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/solr_class.html#SolrClass.optimised_json_query_handler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#solr_class.SolrClass.optimised_json_query_handler" title="Link to this definition">¶</a></dt>
+<dd><p>It is the optimised function that is based on JSON query requests. It needs the query, solr object and top_n
+as input. It also uses the query previsously built by calling &#64;solr_query_builder. This query is a dictionary
+of the keywords and the corresponding JSON query.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">solr_core<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(str) Name of the Solr core to query from.</p>
+</dd>
+<dt class="field-even">top_n<span class="colon">:</span></dt>
+<dd class="field-even"><p>(int, optional) Maximum number of results to return for the top content fields. Defaults to 250.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">tuple<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Contains a dictionary with the report that corresponds to the query, and the total number of                 tweets found for the query.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="solr_class.SolrClass.optimised_json_query_handler_topics">
+<span class="sig-name descname"><span class="pre">optimised_json_query_handler_topics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solr_core</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keyword</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">42</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/solr_class.html#SolrClass.optimised_json_query_handler_topics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#solr_class.SolrClass.optimised_json_query_handler_topics" title="Link to this definition">¶</a></dt>
+<dd><p>It is the optimised function that is based on JSON query requests for Topics. It nees the query, solr         object and rows to be returned. The query is a dictionary of the keywords and the corresponding JSON         query, and in our system is built be &#64;solr_query_builder.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">solr_core<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(str) Name of the Solr core to query from.</p>
+</dd>
+<dt class="field-even">keyword<span class="colon">:</span></dt>
+<dd class="field-even"><p>(str) Comma-separated list of keywords to query.</p>
+</dd>
+<dt class="field-odd">date_start<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(str) Start of the date range in YYYY-MM-DD format. Must be “” if no start date is specified.</p>
+</dd>
+<dt class="field-even">date_end<span class="colon">:</span></dt>
+<dd class="field-even"><p>(str) End of the date range in YYYY-MM-DD format. Must be “” if no end date is specified.</p>
+</dd>
+<dt class="field-odd">rows<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(int, optional) Maximum number of datapoints to be returned for the topics query. Defaults to 5000.</p>
+</dd>
+<dt class="field-even">random_seed<span class="colon">:</span></dt>
+<dd class="field-even"><p>(int, optional) Random seed to control the random selection of data when number of results                 exceeds the maximum number of rows. Defaults to 42.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">tuple<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Contains a dictionary with the report that corresponds to the query, and the total number of                 tweets found for the query.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="solr_class.SolrClass.query">
+<span class="sig-name descname"><span class="pre">query</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'*:*'</span></em><a class="headerlink" href="#solr_class.SolrClass.query" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="solr_class.SolrClass.solr_query_builder">
+<span class="sig-name descname"><span class="pre">solr_query_builder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keywords</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'AND'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/solr_class.html#SolrClass.solr_query_builder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#solr_class.SolrClass.solr_query_builder" title="Link to this definition">¶</a></dt>
+<dd><p>A function that handles the query with relevant filters and keywords. It returns a dictionary of the         keywords and the corresponding JSON query.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">filters<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(dict) Features required by the user to be considered in the query. Defaults to {} (optional).</p>
+</dd>
+<dt class="field-even">keywords<span class="colon">:</span></dt>
+<dd class="field-even"><p>(str, optional) Keywords (comma separated) that the user wants to query. Defaults to ‘’                 which means include all keywords.</p>
+</dd>
+<dt class="field-odd">operator<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(str, optional) The search operator (OR) and (AND) to be used among the keywords. Defaults                 to ‘AND’.</p>
+</dd>
+<dt class="field-even">limit<span class="colon">:</span></dt>
+<dd class="field-even"><p>(int, optional) Maximum size (in count) of the retrieved data from Solr.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">query (str)<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The solr query to be used in the search.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="solr_class.SolrClass.solrs">
+<span class="sig-name descname"><span class="pre">solrs</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#solr_class.SolrClass.solrs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="solr_class.SolrClass.stringify_date_range">
+<span class="sig-name descname"><span class="pre">stringify_date_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filters</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/solr_class.html#SolrClass.stringify_date_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#solr_class.SolrClass.stringify_date_range" title="Link to this definition">¶</a></dt>
+<dd><p>An auxiliary function that handles the date range in the query. It creates the required string for the date         range in Solr query.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">filters<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(dict) The filters that the user wants to apply on the query. The filter should include                 date_start and date_end.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>str: The string that is used in the query to filter the date range.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="solr_class.SolrClass.stringify_filter_components">
+<span class="sig-name descname"><span class="pre">stringify_filter_components</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filters</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/solr_class.html#SolrClass.stringify_filter_components"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#solr_class.SolrClass.stringify_filter_components" title="Link to this definition">¶</a></dt>
+<dd><p>An auxiliary function that handles the filters in the query. It creates the required string for the filters         in Solr query.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">filters<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(dict) The filters that the user wants to apply on the query. The filter might hold data such as                 date_start, date_end, language.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">tuple[str]<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The date_range and the filters_part that are used in the query to filter the date range                 and the other filters.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="solr_class.get_mapping_dict_to_count">
+<span class="sig-prename descclassname"><span class="pre">solr_class.</span></span><span class="sig-name descname"><span class="pre">get_mapping_dict_to_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'count'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/solr_class.html#get_mapping_dict_to_count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#solr_class.get_mapping_dict_to_count" title="Link to this definition">¶</a></dt>
+<dd><p>An auxiliary function that returns a dictionary that holds the passed name of the feature and the title count.     This is used in the report generation so we can map each feature to its own counts.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">name<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(str) The name of the object that will be used as a key in the dictionary.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">dict<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary with keys (first and second) in which the first key holds the name of the feature and the             second holds the string “count”.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="solr_class.print_this">
+<span class="sig-prename descclassname"><span class="pre">solr_class.</span></span><span class="sig-name descname"><span class="pre">print_this</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/solr_class.html#print_this"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#solr_class.print_this" title="Link to this definition">¶</a></dt>
+<dd><p>An auxiliary function that prints a message within a square of (hash)s.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">message<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(obj) The message to be printed, preferably a string.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="solr_class.sort_dict_with_names">
+<span class="sig-prename descclassname"><span class="pre">solr_class.</span></span><span class="sig-name descname"><span class="pre">sort_dict_with_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">my_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/solr_class.html#sort_dict_with_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#solr_class.sort_dict_with_names" title="Link to this definition">¶</a></dt>
+<dd><p>To sort the dictionary based on the values and return the top n values.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">my_dict<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(dict) A dictionary with keys and values to be sorted.</p>
+</dd>
+<dt class="field-even">top_n<span class="colon">:</span></dt>
+<dd class="field-even"><p>(int) The number of top values to be returned.</p>
+</dd>
+<dt class="field-odd">keys<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(dict) A dictionary that holds information about my_dict contents.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">dict<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The sorted dictionary version from the input &#64;my_dict by considering the top n values.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SocioXplorer Dashboard</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">api</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="api.html">API module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">SolrClass module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="topic_modelling_utils.html">Topic Modelling Utils module</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">api</a><ul>
+      <li>Previous: <a href="api.html" title="previous chapter">API module</a></li>
+      <li>Next: <a href="topic_modelling_utils.html" title="next chapter">Topic Modelling Utils module</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Sandrine Chausson, Youssef Al Hariri, Bjorn Ross.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/solr_class.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

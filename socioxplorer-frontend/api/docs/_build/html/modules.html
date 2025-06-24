@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>api &#8212; SocioXplorer Dashboard 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
+    <script src="_static/documentation_options.js?v=8d563738"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API module" href="api.html" />
+    <link rel="prev" title="Welcome to SocioXplorer Dashboard’s documentation!" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="api">
+<h1>api<a class="headerlink" href="#api" title="Link to this heading">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api.html#api.analysis"><code class="docutils literal notranslate"><span class="pre">analysis()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#api.auth"><code class="docutils literal notranslate"><span class="pre">auth()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#api.authentication"><code class="docutils literal notranslate"><span class="pre">authentication()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#api.get_countries_list"><code class="docutils literal notranslate"><span class="pre">get_countries_list()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#api.get_languages_list"><code class="docutils literal notranslate"><span class="pre">get_languages_list()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#api.load_login"><code class="docutils literal notranslate"><span class="pre">load_login()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#api.logout"><code class="docutils literal notranslate"><span class="pre">logout()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#api.refresh_session"><code class="docutils literal notranslate"><span class="pre">refresh_session()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#api.register_user"><code class="docutils literal notranslate"><span class="pre">register_user()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#api.search"><code class="docutils literal notranslate"><span class="pre">search()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#api.topic_modelling"><code class="docutils literal notranslate"><span class="pre">topic_modelling()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="solr_class.html">SolrClass module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="solr_class.html#solr_class.SolrClass"><code class="docutils literal notranslate"><span class="pre">SolrClass</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="solr_class.html#solr_class.SolrClass.check_date_entry"><code class="docutils literal notranslate"><span class="pre">SolrClass.check_date_entry()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="solr_class.html#solr_class.SolrClass.combine_all_sentiments"><code class="docutils literal notranslate"><span class="pre">SolrClass.combine_all_sentiments()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="solr_class.html#solr_class.SolrClass.compute_positive_negative"><code class="docutils literal notranslate"><span class="pre">SolrClass.compute_positive_negative()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="solr_class.html#solr_class.SolrClass.create_facet"><code class="docutils literal notranslate"><span class="pre">SolrClass.create_facet()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="solr_class.html#solr_class.SolrClass.get_all_languages"><code class="docutils literal notranslate"><span class="pre">SolrClass.get_all_languages()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="solr_class.html#solr_class.SolrClass.get_maximum"><code class="docutils literal notranslate"><span class="pre">SolrClass.get_maximum()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="solr_class.html#solr_class.SolrClass.get_term_list_from_keywords"><code class="docutils literal notranslate"><span class="pre">SolrClass.get_term_list_from_keywords()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="solr_class.html#solr_class.SolrClass.normalize_sentiments"><code class="docutils literal notranslate"><span class="pre">SolrClass.normalize_sentiments()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="solr_class.html#solr_class.SolrClass.optimised_json_query_handler"><code class="docutils literal notranslate"><span class="pre">SolrClass.optimised_json_query_handler()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="solr_class.html#solr_class.SolrClass.optimised_json_query_handler_topics"><code class="docutils literal notranslate"><span class="pre">SolrClass.optimised_json_query_handler_topics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="solr_class.html#solr_class.SolrClass.query"><code class="docutils literal notranslate"><span class="pre">SolrClass.query</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="solr_class.html#solr_class.SolrClass.solr_query_builder"><code class="docutils literal notranslate"><span class="pre">SolrClass.solr_query_builder()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="solr_class.html#solr_class.SolrClass.solrs"><code class="docutils literal notranslate"><span class="pre">SolrClass.solrs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="solr_class.html#solr_class.SolrClass.stringify_date_range"><code class="docutils literal notranslate"><span class="pre">SolrClass.stringify_date_range()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="solr_class.html#solr_class.SolrClass.stringify_filter_components"><code class="docutils literal notranslate"><span class="pre">SolrClass.stringify_filter_components()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="solr_class.html#solr_class.get_mapping_dict_to_count"><code class="docutils literal notranslate"><span class="pre">get_mapping_dict_to_count()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="solr_class.html#solr_class.print_this"><code class="docutils literal notranslate"><span class="pre">print_this()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="solr_class.html#solr_class.sort_dict_with_names"><code class="docutils literal notranslate"><span class="pre">sort_dict_with_names()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="topic_modelling_utils.html">Topic Modelling Utils module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="topic_modelling_utils.html#topic_modelling_utils.format_display_text"><code class="docutils literal notranslate"><span class="pre">format_display_text()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="topic_modelling_utils.html#topic_modelling_utils.get_color"><code class="docutils literal notranslate"><span class="pre">get_color()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="topic_modelling_utils.html#topic_modelling_utils.get_plot"><code class="docutils literal notranslate"><span class="pre">get_plot()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="topic_modelling_utils.html#topic_modelling_utils.get_tf_idf"><code class="docutils literal notranslate"><span class="pre">get_tf_idf()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="topic_modelling_utils.html#topic_modelling_utils.get_topic_data"><code class="docutils literal notranslate"><span class="pre">get_topic_data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="topic_modelling_utils.html#topic_modelling_utils.preprocess_data"><code class="docutils literal notranslate"><span class="pre">preprocess_data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="topic_modelling_utils.html#topic_modelling_utils.process_text"><code class="docutils literal notranslate"><span class="pre">process_text()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SocioXplorer Dashboard</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">api</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api.html">API module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="solr_class.html">SolrClass module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="topic_modelling_utils.html">Topic Modelling Utils module</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to SocioXplorer Dashboard’s documentation!</a></li>
+      <li>Next: <a href="api.html" title="next chapter">API module</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Sandrine Chausson, Youssef Al Hariri, Bjorn Ross.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/modules.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

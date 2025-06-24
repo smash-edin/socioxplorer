@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Topic Modelling Utils module &#8212; SocioXplorer Dashboard 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
+    <script src="_static/documentation_options.js?v=8d563738"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="SolrClass module" href="solr_class.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-topic_modelling_utils">
+<span id="topic-modelling-utils-module"></span><h1>Topic Modelling Utils module<a class="headerlink" href="#module-topic_modelling_utils" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="topic_modelling_utils.format_display_text">
+<span class="sig-prename descclassname"><span class="pre">topic_modelling_utils.</span></span><span class="sig-name descname"><span class="pre">format_display_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_len</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">55</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/topic_modelling_utils.html#format_display_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#topic_modelling_utils.format_display_text" title="Link to this definition">¶</a></dt>
+<dd><p>Function that formats text from tweet so that it is split over several lines, each no longer than a given
+number of characters.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">text<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(str) Original tweet.</p>
+</dd>
+<dt class="field-even">line_len<span class="colon">:</span></dt>
+<dd class="field-even"><p>(int, optional) The maximal length of the line in number of characters. Defaults to 55.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">str<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tweet split over several lines.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="topic_modelling_utils.get_color">
+<span class="sig-prename descclassname"><span class="pre">topic_modelling_utils.</span></span><span class="sig-name descname"><span class="pre">get_color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">topic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_label</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/topic_modelling_utils.html#get_color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#topic_modelling_utils.get_color" title="Link to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Function that returns the HEX color code for a topic given that topic’s number, a colormap and the total</dt><dd><p>number of topics.</p>
+</dd>
+<dt>Args:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">topic<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(int) Topic number.</p>
+</dd>
+<dt class="field-even">cmap<span class="colon">:</span></dt>
+<dd class="field-even"><p>(matplotlib.colors.LinearSegmentedColormap) Matplotlib colormap.</p>
+</dd>
+<dt class="field-odd">max_label<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(int) Total number of labels.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">str<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HEX color code</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="topic_modelling_utils.get_plot">
+<span class="sig-prename descclassname"><span class="pre">topic_modelling_utils.</span></span><span class="sig-name descname"><span class="pre">get_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bokeh_cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/topic_modelling_utils.html#get_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#topic_modelling_utils.get_plot" title="Link to this definition">¶</a></dt>
+<dd><p>Function that generates the Bokeh scatter plot used for the Topic Discovery component from the data contained in
+a dataframe and a given colormap.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">df<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(pandas.DataFrame) Dataframe containing at least the columns “display_text” (tweet text to show on hover),             “x” and “y” (coordinates of tweet in scatter plot), “color” and “size” (visual features).</p>
+</dd>
+<dt class="field-even">bokeh_cmap<span class="colon">:</span></dt>
+<dd class="field-even"><p>(bokeh.models.CategoricalColorMapper, optional) Bokeh colormap object used to color datapoints in             the scatter plot based on their topic. If this argument is different from None, the             dataframe in df needs to have the column “Topic”. Defaults to None.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">bokeh.plotting.figure<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Bokeh figure containing scatter plot of Topic Discovery</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="topic_modelling_utils.get_tf_idf">
+<span class="sig-prename descclassname"><span class="pre">topic_modelling_utils.</span></span><span class="sig-name descname"><span class="pre">get_tf_idf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">40</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/topic_modelling_utils.html#get_tf_idf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#topic_modelling_utils.get_tf_idf" title="Link to this definition">¶</a></dt>
+<dd><p>Function that return the N most frequent words for each topic.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">df<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(pandas.DataFrame) Dataframe containing tweets (in field “processed_text”, str) and their topic labels             (in field “Topic”, int).</p>
+</dd>
+<dt class="field-even">n<span class="colon">:</span></dt>
+<dd class="field-even"><p>(int) Number of top words to return per topic.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">dict<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary with, as an entry for each topic, a list of dictionaries with the keys “text” (the word) and             “value” (the TF-IDF value for this word).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="topic_modelling_utils.get_topic_data">
+<span class="sig-prename descclassname"><span class="pre">topic_modelling_utils.</span></span><span class="sig-name descname"><span class="pre">get_topic_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">req</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/topic_modelling_utils.html#get_topic_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#topic_modelling_utils.get_topic_data" title="Link to this definition">¶</a></dt>
+<dd><p>Function that retrieves from Solr the data that corresponds to the filters “source” (name of Solr core),
+“keywords”, “date_start”, “date_end” and “operator”.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">req<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(dict) Query dictionary which must contain the fields “source” (str), “keywords” (list[str]),             “date_start” (str), “date_end” (str) and “operator” (str, must be “OR” or “AND”).</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">dict or tuple<span class="colon">:</span></dt>
+<dd class="field-odd"><p>If successful, returns a dictionary containing the relevant data for the topic             discovery module, faceted by sentiment. Otherwise, returns a tuple containing a dictionary with an error             message and an error code.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="topic_modelling_utils.preprocess_data">
+<span class="sig-prename descclassname"><span class="pre">topic_modelling_utils.</span></span><span class="sig-name descname"><span class="pre">preprocess_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/topic_modelling_utils.html#preprocess_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#topic_modelling_utils.preprocess_data" title="Link to this definition">¶</a></dt>
+<dd><p>Function that creates the new columns “processed_text”, “display_text”, “x” and “y” in the dataframe containing
+the data used to generate the Topic Discovery scatterplot, and filters out duplicate tweets based on the field
+“process_text” (i.e. removes all duplicates when ignoring URLs and twitter handles).</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">df<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(pandas.DataFrame) Dataframe containing the tweets which will be used to generate the Topic Discovery             plot. It must contain the columns “fullText” (str, the tweet text) and “embedding_2d” (list, the two             dimensional embedding of the tweet).</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">pandas.DataFrame<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The pre-processed dataframe containing the new fields “processed_text”, “display_text”,             “x” and “y”.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="topic_modelling_utils.process_text">
+<span class="sig-prename descclassname"><span class="pre">topic_modelling_utils.</span></span><span class="sig-name descname"><span class="pre">process_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/topic_modelling_utils.html#process_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#topic_modelling_utils.process_text" title="Link to this definition">¶</a></dt>
+<dd><p>Function that removes URLs and Twitter handles from the text of a tweet.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">text<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(str) Original tweet.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">str<span class="colon">:</span></dt>
+<dd class="field-odd"><p>New tweet processed such that URLs and twitter handles are removed.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SocioXplorer Dashboard</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">api</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="api.html">API module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="solr_class.html">SolrClass module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Topic Modelling Utils module</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">api</a><ul>
+      <li>Previous: <a href="solr_class.html" title="previous chapter">SolrClass module</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Sandrine Chausson, Youssef Al Hariri, Bjorn Ross.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/topic_modelling_utils.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

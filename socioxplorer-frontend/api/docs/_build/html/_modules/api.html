@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>api &#8212; SocioXplorer Dashboard 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=039e1c02" />
+    <script src="../_static/documentation_options.js?v=8d563738"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for api</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">configs</span> <span class="kn">import</span> <span class="n">ApplicationConfig</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">make_response</span><span class="p">,</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">Response</span>
+<span class="kn">from</span> <span class="nn">flask_bcrypt</span> <span class="kn">import</span> <span class="n">Bcrypt</span>
+<span class="kn">from</span> <span class="nn">flask_cors</span> <span class="kn">import</span> <span class="n">CORS</span>
+<span class="kn">from</span> <span class="nn">model.models</span> <span class="kn">import</span> <span class="n">db</span><span class="p">,</span> <span class="n">User</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">jwt</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+
+<span class="kn">from</span> <span class="nn">solr_class</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">topic_modelling_utils</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<span class="sd">&quot;&quot;&quot;This is the main Flask API file containing all API endpoints. This API is used to retrieve data from the Solr core,</span>
+<span class="sd">in which the data is indexed, and process it into a format expected by the React UI.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">CURRENT_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">template_folder</span><span class="o">=</span><span class="s1">&#39;html&#39;</span><span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_object</span><span class="p">(</span><span class="n">ApplicationConfig</span><span class="p">)</span>
+<span class="n">CORS</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">supports_credentials</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">bcrypt</span> <span class="o">=</span> <span class="n">Bcrypt</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+
+<span class="n">db</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">create_all</span><span class="p">()</span>
+
+<span class="n">top_n</span> <span class="o">=</span> <span class="mi">250</span>
+
+<span class="n">cached_tweets_folder</span> <span class="o">=</span> <span class="s1">&#39;../cached_tweets/&#39;</span>
+
+<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">cached_tweets_folder</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">cached_tweets_folder</span><span class="p">)</span>
+
+
+<span class="c1"># ================== AUTHENTICATION FUNCTIONS ==================</span>
+
+<div class="viewcode-block" id="refresh_session">
+<a class="viewcode-back" href="../api.html#api.refresh_session">[docs]</a>
+<span class="k">def</span> <span class="nf">refresh_session</span><span class="p">(</span><span class="n">user</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to refresh access to the user session if logged in and active (i.e. delay expiration of session).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :dict: Contains an &quot;accessToken&quot; and a &quot;username&quot; field.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">expiration</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">timestamp</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">+</span><span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;ACCESS_TOKEN_TIMER&#39;</span><span class="p">]))</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">accessToken</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">encode</span><span class="p">({</span>
+                <span class="s1">&#39;username&#39;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">username</span><span class="p">,</span>
+                <span class="s1">&#39;exp&#39;</span><span class="p">:</span> <span class="n">expiration</span>
+            <span class="p">},</span>
+            <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;ACCESS_TOKEN_SECRET&#39;</span><span class="p">])</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exp</span><span class="p">:</span>
+        <span class="n">print_this</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">exp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">expiration</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">timestamp</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">+</span><span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;REFRESH_TOKEN_TIMER&#39;</span><span class="p">]))</span>
+    <span class="n">refreshToken</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">encode</span><span class="p">({</span>
+            <span class="s1">&#39;username&#39;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">username</span><span class="p">,</span>
+            <span class="s1">&#39;exp&#39;</span><span class="p">:</span> <span class="n">expiration</span>
+        <span class="p">},</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;REFRESH_TOKEN_SECRET&#39;</span><span class="p">])</span>
+
+    <span class="n">resp</span> <span class="o">=</span> <span class="n">make_response</span><span class="p">(</span><span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;accessToken&quot;</span><span class="p">:</span> <span class="n">accessToken</span><span class="p">,</span> <span class="s2">&quot;username&quot;</span><span class="p">:</span><span class="n">user</span><span class="o">.</span><span class="n">username</span><span class="p">}))</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">refreshToken</span> <span class="o">=</span> <span class="n">refreshToken</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">set_cookie</span><span class="p">(</span><span class="s1">&#39;jwt&#39;</span><span class="p">,</span> <span class="n">user</span><span class="o">.</span><span class="n">refreshToken</span><span class="p">,</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;REFRESH_TOKEN_TIMER&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">1000</span><span class="p">,</span> <span class="n">httponly</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  <span class="n">secure</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">samesite</span><span class="o">=</span><span class="s2">&quot;Strict&quot;</span><span class="p">)</span>
+        <span class="n">print_this</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;1) user.refreshToken: </span><span class="si">{</span><span class="n">user</span><span class="o">.</span><span class="n">refreshToken</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2"> refreshToken: </span><span class="si">{</span><span class="n">refreshToken</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exp</span><span class="p">:</span>
+        <span class="n">print_this</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">exp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">resp</span></div>
+
+
+<div class="viewcode-block" id="register_user">
+<a class="viewcode-back" href="../api.html#api.register_user">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/register&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">register_user</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;API endpoint to register a new user.</span>
+
+<span class="sd">    Query fields</span>
+<span class="sd">        :user: (str) User&#39;s username.</span>
+<span class="sd">        :pwd: (str) User&#39;s password.</span>
+
+<span class="sd">    Response</span>
+<span class="sd">        :dict or tuple: If registration is successful, returns a dictionary with an &quot;id&quot; (the new user&#39;s ID) and a &quot;username&quot; \</span>
+<span class="sd">            field. Otherwise, return a dictionary containing the &quot;error&quot; field (error message) and an error code.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">username</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">]</span>
+    <span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;pwd&#39;</span><span class="p">]</span>
+
+    <span class="n">hashed_password</span> <span class="o">=</span> <span class="n">bcrypt</span><span class="o">.</span><span class="n">generate_password_hash</span><span class="p">(</span><span class="n">password</span><span class="p">)</span>
+
+    <span class="n">user_exists</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">user_exists</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;User already exists&quot;</span><span class="p">}),</span> <span class="mi">409</span>
+
+    <span class="n">new_user</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">hashed_password</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">new_user</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span>
+        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">new_user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+        <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">new_user</span><span class="o">.</span><span class="n">username</span>
+    <span class="p">})</span></div>
+
+
+
+<div class="viewcode-block" id="logout">
+<a class="viewcode-back" href="../api.html#api.logout">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/logout&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">logout</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;API endpoint to log out user from their personal session.</span>
+
+<span class="sd">    Query fields:</span>
+<span class="sd">        :accessToken: (str) User&#39;s access token.</span>
+
+<span class="sd">    Response:</span>
+<span class="sd">        :tuple: Contains a dictionary with a status message (under &quot;Message&quot; field) and an error code.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">is_json</span><span class="p">:</span>
+        <span class="n">accessToken</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;accessToken&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;accessToken&quot;</span> <span class="ow">in</span> <span class="n">session</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">accessToken</span> <span class="o">==</span> <span class="n">session</span><span class="p">[</span><span class="s2">&quot;accessToken&quot;</span><span class="p">]:</span>
+                <span class="n">session</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;accessToken&#39;</span><span class="p">)</span>
+
+    <span class="n">refreshToken</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">cookies</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;jwt&#39;</span><span class="p">)</span>
+    <span class="n">temp_user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">refreshToken</span><span class="o">=</span><span class="n">refreshToken</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">temp_user</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">temp_user</span><span class="o">.</span><span class="n">refreshToken</span><span class="p">:</span>
+            <span class="n">temp_user</span><span class="o">.</span><span class="n">refreshToken</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="n">resp</span> <span class="o">=</span> <span class="n">make_response</span><span class="p">(</span><span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;Message&quot;</span><span class="p">:</span> <span class="s2">&quot;Logged out!&quot;</span><span class="p">}))</span>
+    <span class="n">resp</span><span class="o">.</span><span class="n">delete_cookie</span><span class="p">(</span><span class="s1">&#39;jwt&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">resp</span><span class="p">,</span> <span class="mi">200</span></div>
+
+
+
+<div class="viewcode-block" id="auth">
+<a class="viewcode-back" href="../api.html#api.auth">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/public&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">auth</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;API endpoint for public access to the dashboard, simply returns an error message.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :dict: Contains a single field &quot;error&quot; with a welcome message.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span><span class="s1">&#39;welcome to no authorisation required part!!&#39;</span><span class="p">})</span></div>
+
+
+
+<div class="viewcode-block" id="load_login">
+<a class="viewcode-back" href="../api.html#api.load_login">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/auth&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">load_login</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;API endpoint that launches the authentication process. If an existing user session is active, the login is \</span>
+<span class="sd">    performed automatically. Otherwise, front-end is notified that the user needs to log in.</span>
+
+<span class="sd">    Response:</span>
+<span class="sd">        :tuple: Contains a dictionary with the bearer&#39;s access token (if login is successful) or appropriate \</span>
+<span class="sd">            error message otherwise, and an error code.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">bearer</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Authorization&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Authorization&#39;</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">bearer</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Authorization&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;authorization&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;authorization&#39;</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">bearer</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;authorization&#39;</span><span class="p">)</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">sessionInfo</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">bearer</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">bearer</span> <span class="o">=</span> <span class="n">bearer</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">sessionInfo</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">jwt</span><span class="o">=</span><span class="n">bearer</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;ACCESS_TOKEN_SECRET&#39;</span><span class="p">],</span> <span class="n">algorithms</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;HS256&#39;</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exp</span><span class="p">:</span>
+            <span class="n">sessionInfo</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error&quot;</span> <span class="o">+</span> <span class="n">exp</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">sessionInfo</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;accessToken&quot;</span><span class="p">:</span> <span class="n">bearer</span><span class="p">}),</span> <span class="mi">200</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">refreshToken</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">cookies</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;jwt&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">refreshToken</span><span class="p">:</span>
+            <span class="n">temp_user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">refreshToken</span><span class="o">=</span><span class="n">refreshToken</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">sessionInfoCookie</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">jwt</span><span class="o">=</span><span class="n">refreshToken</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;REFRESH_TOKEN_SECRET&#39;</span><span class="p">],</span> <span class="n">algorithms</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;HS256&#39;</span><span class="p">])</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exp</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">temp_user</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">temp_user</span><span class="o">.</span><span class="n">refreshToken</span><span class="o">!=</span><span class="s2">&quot;&quot;</span><span class="p">:</span>
+                        <span class="n">temp_user</span><span class="o">.</span><span class="n">refreshToken</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+                    <span class="n">resp</span> <span class="o">=</span> <span class="n">make_response</span><span class="p">(</span><span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;Message&quot;</span><span class="p">:</span> <span class="s2">&quot;Not logged in!&quot;</span><span class="p">}))</span>
+                    <span class="n">resp</span><span class="o">.</span><span class="n">delete_cookie</span><span class="p">(</span><span class="s1">&#39;jwt&#39;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">bearer</span><span class="p">:</span>
+                        <span class="n">resp</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;accessToken&#39;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">resp</span><span class="p">,</span> <span class="mi">401</span>
+            <span class="k">if</span> <span class="n">temp_user</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">temp_user</span><span class="o">.</span><span class="n">username</span> <span class="o">==</span> <span class="n">sessionInfoCookie</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;AT AUTH GET COMMIT!&quot;</span><span class="p">)</span>
+                    <span class="n">resp</span> <span class="o">=</span> <span class="n">refresh_session</span><span class="p">(</span><span class="n">temp_user</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">resp</span><span class="p">,</span> <span class="mi">200</span>
+
+        <span class="k">return</span> <span class="n">authentication</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="authentication">
+<a class="viewcode-back" href="../api.html#api.authentication">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/auth&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">authentication</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;API endpoint that enables the user to log into their personal session (e.g. to save and load reports).</span>
+
+<span class="sd">    Query fields:</span>
+<span class="sd">        :user: (str) User&#39;s username.</span>
+<span class="sd">        :pwd: (str) User&#39;s password.</span>
+
+<span class="sd">    Response:</span>
+<span class="sd">        :tuple: Contains a dictionary with a status message (under “error” field) and an error code.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">is_json</span><span class="p">:</span>
+            <span class="n">username</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">]</span>
+            <span class="n">pwd</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">&quot;pwd&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">username</span><span class="p">:</span>
+                <span class="n">hashed_password</span> <span class="o">=</span> <span class="n">bcrypt</span><span class="o">.</span><span class="n">generate_password_hash</span><span class="p">(</span><span class="n">pwd</span><span class="p">)</span>
+                <span class="n">temp_user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="n">temp_user</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Unauthorized</span><span class="se">\n</span><span class="s2">Wrong username or password&quot;</span><span class="p">}),</span> <span class="mi">401</span>
+
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">username</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">bcrypt</span><span class="o">.</span><span class="n">check_password_hash</span><span class="p">(</span><span class="n">temp_user</span><span class="o">.</span><span class="n">password</span><span class="p">,</span> <span class="n">pwd</span><span class="p">):</span>
+                        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span><span class="s2">&quot;Unauthorized</span><span class="se">\n</span><span class="s2">Wrong username or password&quot;</span><span class="p">}),</span> <span class="mi">401</span>
+
+                    <span class="n">print_this</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;AT AUTH GET!</span><span class="se">\n</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">pwd</span><span class="si">}</span><span class="s2"> authorized&quot;</span><span class="p">)</span>
+                    <span class="n">resp</span> <span class="o">=</span> <span class="n">refresh_session</span><span class="p">(</span><span class="n">temp_user</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">resp</span><span class="p">,</span> <span class="mi">200</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span><span class="s2">&quot;Unauthorized!&quot;</span><span class="p">}),</span> <span class="mi">401</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="n">make_response</span><span class="p">(</span><span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;accessToken&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">}))</span>
+            <span class="n">resp</span><span class="o">.</span><span class="n">delete_cookie</span><span class="p">(</span><span class="s1">&#39;jwt&#39;</span><span class="p">,</span> <span class="n">httponly</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  <span class="n">secure</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">samesite</span><span class="o">=</span><span class="s2">&quot;Strict&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">resp</span><span class="p">,</span> <span class="mi">200</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span><span class="s2">&quot;Unauthorized!&quot;</span><span class="p">}),</span> <span class="mi">401</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exp</span><span class="p">:</span>
+
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span><span class="s2">&quot;Unauthorized!&quot;</span><span class="p">}),</span> <span class="mi">401</span></div>
+
+
+
+<span class="c1"># Not sure what the following function is for...</span>
+<div class="viewcode-block" id="analysis">
+<a class="viewcode-back" href="../api.html#api.analysis">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/analysis&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">analysis</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;API endpoint that enables access to the &quot;Analysis&quot; page in the dashboard from cached credentials</span>
+
+<span class="sd">    Response:</span>
+<span class="sd">        :dict: Contains the single field &quot;error&quot; with the error message.</span>
+<span class="sd">        :int: Error code.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">refreshToken</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">cookies</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;jwt&#39;</span><span class="p">)</span>
+    <span class="n">resp</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">refreshToken</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">refreshToken</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">temp_user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">refreshToken</span><span class="o">=</span><span class="n">refreshToken</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+            <span class="n">sessionInfoCookie</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">jwt</span><span class="o">=</span><span class="n">refreshToken</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;REFRESH_TOKEN_SECRET&#39;</span><span class="p">],</span> <span class="n">algorithms</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;HS256&#39;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">temp_user</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">temp_user</span><span class="o">.</span><span class="n">username</span> <span class="o">==</span> <span class="n">sessionInfoCookie</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]:</span>
+                    <span class="n">resp</span> <span class="o">=</span> <span class="n">refresh_session</span><span class="p">(</span><span class="n">temp_user</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">resp</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">temp_user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="s1">&#39;user1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;refreshToken:  &quot;</span> <span class="o">+</span> <span class="n">refreshToken</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;temp_user.refreshToken:  &quot;</span> <span class="o">+</span> <span class="n">temp_user</span><span class="o">.</span><span class="n">refreshToken</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exp</span><span class="p">:</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">resp</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">resp</span><span class="p">,</span> <span class="mi">200</span>
+    <span class="n">resp</span> <span class="o">=</span> <span class="n">make_response</span><span class="p">(</span><span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;response:&quot;</span><span class="p">:</span><span class="s2">&quot;Unauthorized!&quot;</span><span class="p">}))</span>
+    <span class="n">resp</span><span class="o">.</span><span class="n">delete_cookie</span><span class="p">(</span><span class="s1">&#39;jwt&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">resp</span><span class="p">,</span> <span class="mi">401</span></div>
+
+
+
+<span class="c1"># ================== MAIN REPORT FUNCTIONS ==================</span>
+
+
+<span class="n">languages_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">CURRENT_PATH</span><span class="p">,</span> <span class="s1">&#39;.data/languages.csv&#39;</span><span class="p">)</span>
+<span class="n">countries_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">CURRENT_PATH</span><span class="p">,</span> <span class="s1">&#39;.data/countries_codes_english.csv&#39;</span><span class="p">)</span>
+
+<span class="n">languages</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">languages_file_path</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;;&quot;</span><span class="p">)[</span><span class="s1">&#39;language&#39;</span><span class="p">])</span>
+<span class="n">countries</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">countries_file_path</span><span class="p">)[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+
+<span class="c1"># languages = list(pd.read_csv(&#39;./.data/languages.csv&#39;, delimiter=&quot;;&quot;)[&#39;language&#39;])</span>
+<span class="c1"># countries = list(pd.read_csv(&#39;./.data/countries_codes_english.csv&#39;)[&#39;name&#39;])</span>
+
+<div class="viewcode-block" id="get_countries_list">
+<a class="viewcode-back" href="../api.html#api.get_countries_list">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/api/get_countries_list&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">get_countries_list</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;API endpoint that returns the list of valid countries (stored on file) for location graph.</span>
+
+<span class="sd">    Response:</span>
+<span class="sd">        :dict: Jsonified CSV file with list of countries with their codes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">make_response</span><span class="p">(</span><span class="n">jsonify</span><span class="p">(</span><span class="n">countries</span><span class="p">)),</span> <span class="mi">200</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exp</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">make_response</span><span class="p">(</span><span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Error getting countries list!&quot;</span><span class="p">})),</span> <span class="mi">400</span></div>
+
+
+<div class="viewcode-block" id="get_languages_list">
+<a class="viewcode-back" href="../api.html#api.get_languages_list">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/api/get_languages_list&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">get_languages_list</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;API endpoint that returns the list of valid languages (stored on file) for language graph.</span>
+
+<span class="sd">    Response:</span>
+<span class="sd">        :dict: Jsonified list of languages.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">make_response</span><span class="p">(</span><span class="n">jsonify</span><span class="p">(</span><span class="n">languages</span><span class="p">)),</span> <span class="mi">200</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exp</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">make_response</span><span class="p">(</span><span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Error getting languages list!&quot;</span><span class="p">})),</span> <span class="mi">400</span></div>
+
+
+
+<div class="viewcode-block" id="search">
+<a class="viewcode-back" href="../api.html#api.search">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/api/search&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">search</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;API endpoint that returns the relevant data from Solr for the main report.</span>
+
+<span class="sd">    Query fields:</span>
+<span class="sd">        :source: (str) Dataset to query from in Solr.</span>
+<span class="sd">        :date_start: (str) Start of the date range (format YYYY-MM-DD, by default &quot;&quot;).</span>
+<span class="sd">        :date_end: (str) End of the date range (format YYYY-MM-DD, by default &quot;&quot;).</span>
+<span class="sd">        :keywords: (str) Comma-separated list of keywords to match in text (e.g. &quot;keyword1, keyword2&quot;, by default &quot;&quot;).</span>
+<span class="sd">        :operator: (str) Determines whether to retrieve data that matches all keywords (&quot;AND&quot;) or at least one of the \</span>
+<span class="sd">            keywords (&quot;OR&quot;, by default &quot;OR&quot;).</span>
+<span class="sd">        :nb_topics: (int) Number of cluster to group data into in Topic Discovery module.</span>
+<span class="sd">        :claim: (str) Claim to be projected into the data in Topic Discovery module.</span>
+<span class="sd">        :random_seed: (int) Random seed to make random selection of data in Topic Discovery Module (i.e. when volume is \</span>
+<span class="sd">            greater than 100K) deterministic.</span>
+
+<span class="sd">    Response:</span>
+<span class="sd">        :hits: (int) Total volume of tweets that matched the query.</span>
+<span class="sd">        :show_report: (bool) Whether the query was successful (i.e. results were found), defines if report should be \</span>
+<span class="sd">          shown in front-end.</span>
+<span class="sd">        :dataSource: (str) Dataset queried from in Solr.</span>
+<span class="sd">        :source_text: (str) Display name of dataset queried from in Solr.</span>
+<span class="sd">        :operator: (str) Determines whether data retrieved matched all keywords at once (&quot;AND&quot;) or at least one of the \</span>
+<span class="sd">            keywords (&quot;OR&quot;, by default &quot;OR&quot;).</span>
+<span class="sd">        :report: (dict) The report contains a different entry for each keyword from the query. This entry is itself a \</span>
+<span class="sd">            dictionary with the following fields:</span>
+
+<span class="sd">            * count: (int) Number of datapoints that match this keyword</span>
+<span class="sd">            * mentions: (dict[list]) Number of mentions per user, faceted by sentiment (i.e. of the text)</span>
+<span class="sd">            * retweeted: (dict[list]) Number of retweets by user, faceted by sentiment (i.e. of the text)</span>
+<span class="sd">            * retweeters: (dict[list]) Number of retweets per user, faceted by sentiment (i.e. of the text)</span>
+<span class="sd">            * Languages_Distributions: (list[dict]) Number of tweets per language. Each dictionary contains a &quot;Count&quot; \</span>
+<span class="sd">              and &quot;Language&quot; field</span>
+<span class="sd">            * tweets_languages_by_sentiments: (dict[list]) Number of tweets per day, faceted by sentiment and language</span>
+<span class="sd">            * Sentiment_per_language: (dict[list]) Number of tweets per language, faceted by sentiment</span>
+<span class="sd">            * Sentiments_Distributions: (dict[list]) Number of tweets per day, faceted by sentiment</span>
+<span class="sd">            * emojis: (dict[list]) Count per emoji, faceted by sentiment</span>
+<span class="sd">            * media: (dict[list]) Count per media URL, faceted by sentiment</span>
+<span class="sd">            * top_tweets: (dict[list]) Top 10K most retweeted tweets in dataset per sentiment, with id, date of \</span>
+<span class="sd">              publication, text, language, location and retweet count</span>
+<span class="sd">            * top_users: (dict[list]) Top 10K most retweeted users in dataset per sentiment, with user ID, screenname, \</span>
+<span class="sd">              description, language, location and retweet count</span>
+<span class="sd">            * urls: (dict[list]) Count per URL, faceted by sentiment</span>
+<span class="sd">            * userScreenName: (dict[list]) Count per user screenname, faceted by sentiment</span>
+<span class="sd">            * hashtags: (dict[list]) Count per hashtag, faceted by sentiment</span>
+<span class="sd">            * processedDescTokens: (dict[list]) Count per word from user descriptions, faceted by sentiment</span>
+<span class="sd">            * processedTokens: (dict[list]) Count per word from text, faceted by sentiment</span>
+<span class="sd">            * traffic: (list[dict]) Number of tweets per day. Each dictionary contains a &quot;Count&quot; and &quot;Date&quot; field</span>
+<span class="sd">            * users_locations_by_languages: (dict[list]) Number of users per region, faceted by language</span>
+<span class="sd">            * users_locations_by_sentiments: (dict[list]) Number of users per region, faceted by sentiment</span>
+<span class="sd">            * tweets_locations_by_sentiments: (dict[list]) Number of tweets per region, faceted by sentiment</span>
+<span class="sd">            * tweets_locations_by_languages: (dict[list]) Number of tweets per region, faceted by language</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">print_this</span><span class="p">(</span><span class="s2">&quot;Search API called!&quot;</span><span class="p">)</span>
+    <span class="n">req</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+    <span class="n">source</span><span class="o">=</span><span class="kc">None</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;source&#39;</span> <span class="ow">in</span> <span class="n">req</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">req</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">source</span><span class="o">==</span><span class="kc">None</span><span class="p">:</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Error&quot;</span><span class="p">:</span> <span class="s2">&quot;No data source specified, or wrong one provided!&quot;</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">make_response</span><span class="p">(</span><span class="n">jsonify</span><span class="p">(</span><span class="n">resp</span><span class="p">)),</span> <span class="mi">400</span>
+    <span class="k">if</span> <span class="s1">&#39;source_text&#39;</span> <span class="ow">in</span> <span class="n">req</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">source_text</span> <span class="o">=</span> <span class="n">req</span><span class="p">[</span><span class="s1">&#39;source_text&#39;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;keywords&#39;</span> <span class="ow">in</span> <span class="n">req</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="n">keywords</span> <span class="o">=</span> <span class="n">req</span><span class="p">[</span><span class="s1">&#39;keywords&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">keywords</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="s1">&#39;filters&#39;</span> <span class="ow">in</span> <span class="n">req</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="n">filters</span> <span class="o">=</span> <span class="n">req</span><span class="p">[</span><span class="s1">&#39;filters&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">filters</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">if</span> <span class="s1">&#39;date_start&#39;</span> <span class="ow">in</span> <span class="n">req</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="s1">&#39;date_start&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">filters</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">filters</span><span class="p">[</span><span class="s1">&#39;date_start&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">req</span><span class="p">[</span><span class="s1">&#39;date_start&#39;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="s1">&#39;date_end&#39;</span> <span class="ow">in</span> <span class="n">req</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="s1">&#39;date_end&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">filters</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">filters</span><span class="p">[</span><span class="s1">&#39;date_end&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">req</span><span class="p">[</span><span class="s1">&#39;date_end&#39;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="s1">&#39;limit&#39;</span> <span class="ow">in</span> <span class="n">req</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">limit</span> <span class="o">=</span> <span class="n">req</span><span class="p">[</span><span class="s1">&#39;limit&#39;</span><span class="p">]</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="s1">&#39;count&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">req</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">250</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">req</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">])</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="s1">&#39;operator&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">req</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="s1">&#39;AND&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="n">req</span><span class="p">[</span><span class="s1">&#39;operator&#39;</span><span class="p">]</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="s1">&#39;num_of_rows&#39;</span> <span class="ow">in</span> <span class="n">req</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="n">num_of_rows</span> <span class="o">=</span> <span class="n">req</span><span class="p">[</span><span class="s1">&#39;num_of_rows&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">num_of_rows</span> <span class="o">=</span> <span class="s1">&#39;use_all&#39;</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="s1">&#39;cache&#39;</span> <span class="ow">in</span> <span class="n">req</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="n">cache</span><span class="o">=</span> <span class="n">req</span><span class="p">[</span><span class="s1">&#39;cache&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cache</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="s1">&#39;fname&#39;</span> <span class="ow">in</span> <span class="n">req</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="n">fname</span><span class="o">=</span> <span class="n">req</span><span class="p">[</span><span class="s1">&#39;fname&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fname</span> <span class="o">=</span> <span class="s1">&#39;myquery&#39;</span>
+
+    <span class="n">dataSource</span> <span class="o">=</span> <span class="n">SolrClass</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="n">filters</span><span class="p">,</span> <span class="n">keywords</span><span class="o">=</span><span class="n">keywords</span><span class="p">,</span> <span class="n">operator</span><span class="o">=</span><span class="n">op</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">)</span>
+    <span class="n">report</span><span class="p">,</span><span class="n">hits</span> <span class="o">=</span> <span class="n">dataSource</span><span class="o">.</span><span class="n">optimised_json_query_handler</span><span class="p">(</span><span class="n">solr_core</span><span class="o">=</span><span class="n">source</span><span class="p">,</span> <span class="n">rows</span><span class="o">=</span><span class="n">num_of_rows</span><span class="p">,</span> <span class="n">top_n</span><span class="o">=</span><span class="n">count</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">cache</span><span class="p">):</span>
+        <span class="n">fname</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cached_tweets_folder</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2">.json&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">report</span><span class="p">,</span> <span class="n">json_file</span><span class="p">,</span><span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">print_this</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Hits are : </span><span class="si">{</span><span class="n">hits</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">result</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;report&#39;</span><span class="p">:</span><span class="n">report</span><span class="p">,</span><span class="s1">&#39;hits&#39;</span><span class="p">:</span><span class="n">hits</span><span class="p">,</span> <span class="s1">&#39;show_report&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;dataSource&#39;</span><span class="p">:</span><span class="n">source</span><span class="p">,</span> <span class="s1">&#39;operator&#39;</span><span class="p">:</span><span class="n">op</span><span class="p">,</span> <span class="s1">&#39;source_text&#39;</span><span class="p">:</span><span class="n">source_text</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="mi">200</span></div>
+
+
+
+<div class="viewcode-block" id="topic_modelling">
+<a class="viewcode-back" href="../api.html#api.topic_modelling">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/api/topic_modelling&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">topic_modelling</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;API endpoint that returns relevant information for the Topic Discovery scatter plots and topic wordclouds.</span>
+
+<span class="sd">    Query fields:</span>
+<span class="sd">        :source: (str) Dataset to query from in Solr.</span>
+<span class="sd">        :date_start: (str) Start of the date range (format YYYY-MM-DD, by default &quot;&quot;).</span>
+<span class="sd">        :date_end: (str) End of the date range (format YYYY-MM-DD, by default &quot;&quot;).</span>
+<span class="sd">        :keywords: (list[str]) List of keywords to match in text.</span>
+<span class="sd">        :operator: (str) Determines whether to retrieve data that matches all keywords (&quot;AND&quot;) or at least one of the \</span>
+<span class="sd">            keywords (&quot;OR&quot;, by default &quot;OR&quot;).</span>
+<span class="sd">        :nb_topics: (int) Number of cluster to group data into.</span>
+<span class="sd">        :claim: (str) Claim to be projected into the same multi-dimensional space as the data.</span>
+<span class="sd">        :random_seed: (int) Random seed to make random selection of data (i.e. when volume is greater than 100K) \</span>
+<span class="sd">            deterministic.</span>
+
+<span class="sd">    Output:</span>
+<span class="sd">        :figures: (dict[dict[bokeh.plotting.figure]]) Bokeh figures per keyword (outter dict) and sentiment \</span>
+<span class="sd">            (inner dict).</span>
+<span class="sd">        :top_words: (dict[dict[list]]) Words with the greatest TF-IDF per keyword (outter dict) and sentiment (inner \</span>
+<span class="sd">            dict). Each element in the inner dict is a list of dictionaries, with a &quot;text&quot; (str, the word) and &quot;value&quot; \</span>
+<span class="sd">            (float, TF-IDF value) field.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">print_this</span><span class="p">(</span><span class="s2">&quot;Topic Modelling endpoint called!&quot;</span><span class="p">)</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="c1"># Get API request header</span>
+    <span class="n">req</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+
+    <span class="c1"># Get relevant data from Solr for the current request</span>
+    <span class="n">responses</span> <span class="o">=</span> <span class="n">get_topic_data</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+    <span class="n">keywords</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">responses</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="c1"># Generate empty object in which results will be stored</span>
+    <span class="n">plots_list</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span> <span class="c1"># Info for Bokeh plots</span>
+    <span class="n">top_words</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">req</span><span class="p">[</span><span class="s2">&quot;nb_topics&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">}</span> <span class="c1"># Info for topic wordclouds</span>
+
+    <span class="c1"># Get the data that corresponds to the &quot;All&quot; keyword</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">keywords</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">df_ALL</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">responses</span><span class="p">[</span><span class="s2">&quot;All&quot;</span><span class="p">])</span>
+        <span class="n">df_ALL</span> <span class="o">=</span> <span class="n">preprocess_data</span><span class="p">(</span><span class="n">df_ALL</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">df_ALL</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">responses</span><span class="p">[</span><span class="n">keywords</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+        <span class="n">df_ALL</span> <span class="o">=</span> <span class="n">preprocess_data</span><span class="p">(</span><span class="n">df_ALL</span><span class="p">)</span>
+
+    <span class="c1"># If the dataframe with the data does not contain the field &quot;fullText&quot;, return an empty results dictionary.</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;fullText&#39;</span> <span class="ow">in</span> <span class="n">df_ALL</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s2">&quot;figures&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;top_words&quot;</span><span class="p">:</span> <span class="p">[]})</span>
+
+    <span class="c1"># Generate the &quot;Topic&quot; field in the dataframe for the data corresponding to the keyword &quot;All&quot;</span>
+    <span class="k">if</span> <span class="n">req</span><span class="p">[</span><span class="s2">&quot;nb_topics&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># If the number of topics specified is 0, all topics are None</span>
+        <span class="n">df_ALL</span><span class="p">[</span><span class="s1">&#39;Topic&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_ALL</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Otherwise, tweets are labelled with topic numbers by applying the K-means algorithm to the tweets&#39;</span>
+        <span class="c1"># 5d embeddings</span>
+        <span class="n">umap_embeddings</span> <span class="o">=</span> <span class="n">df_ALL</span><span class="p">[</span><span class="s2">&quot;embedding_5d&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">req</span><span class="p">[</span><span class="s2">&quot;nb_topics&quot;</span><span class="p">])</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">umap_embeddings</span><span class="p">)</span>
+        <span class="n">yhat</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">umap_embeddings</span><span class="p">)</span>
+        <span class="n">df_ALL</span><span class="p">[</span><span class="s1">&#39;Topic&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">yhat</span>
+
+    <span class="c1"># Set the &quot;Size&quot; of all tweets in the scatter plot to be equal to 4</span>
+    <span class="n">df_ALL</span><span class="p">[</span><span class="s2">&quot;size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_ALL</span><span class="p">)</span>
+
+    <span class="c1"># Generate the &quot;color&quot; field in the dataframe for the data corresponding to the keyword &quot;All&quot;</span>
+    <span class="k">if</span> <span class="n">req</span><span class="p">[</span><span class="s2">&quot;nb_topics&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># If the number of topics specified is 0, all the tweets in the scatter plot are colored in grey</span>
+        <span class="n">df_ALL</span><span class="p">[</span><span class="s2">&quot;color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;#BDBDBD&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_ALL</span><span class="p">)</span>
+        <span class="n">bokeh_cmap</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Otherwise, the color is obtained from the topic number using the &quot;get_color&quot; function</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">df_ALL</span><span class="p">[</span><span class="s2">&quot;Topic&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">())))</span>
+        <span class="n">max_label</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">cmap</span> <span class="o">=</span> <span class="n">get_cmap</span><span class="p">(</span><span class="s1">&#39;hsv_r&#39;</span><span class="p">)</span>
+        <span class="n">bokeh_cmap</span> <span class="o">=</span> <span class="n">CategoricalColorMapper</span><span class="p">(</span><span class="n">factors</span><span class="o">=</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">l</span><span class="p">)</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">],</span> <span class="n">palette</span><span class="o">=</span><span class="p">[</span><span class="n">get_color</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">cmap</span><span class="p">,</span> <span class="n">max_label</span><span class="p">)</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">])</span>
+        <span class="n">df_ALL</span><span class="p">[</span><span class="s2">&quot;color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_ALL</span><span class="p">[</span><span class="s2">&quot;Topic&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">get_color</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cmap</span><span class="p">,</span> <span class="n">max_label</span><span class="p">))</span>
+
+    <span class="c1"># The following code is concerned with adding a custom claim (from the &quot;claim&quot; argument from query header) onto the</span>
+    <span class="c1"># Topic Discovery scatter plot</span>
+
+    <span class="n">new_row</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">req</span><span class="p">[</span><span class="s2">&quot;claim&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+
+        <span class="c1"># Use the SBERT classifier, the parametric UMAP embedder to reduce 768 dimensional embeddings to 5 dimensions</span>
+        <span class="c1"># and that to reduce 5 dimensional embeddings to 2 dimensions</span>
+        <span class="k">global</span> <span class="n">CLASSIFIER</span>
+        <span class="k">global</span> <span class="n">EMBEDDER_5D</span>
+        <span class="k">global</span> <span class="n">EMBEDDER_2D</span>
+
+        <span class="c1"># Obtain different encodings for the &quot;claim&quot; query argument</span>
+        <span class="n">encoding</span> <span class="o">=</span> <span class="n">CLASSIFIER</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">req</span><span class="p">[</span><span class="s2">&quot;claim&quot;</span><span class="p">])</span>
+        <span class="n">encoding_5d</span> <span class="o">=</span> <span class="n">EMBEDDER_5D</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="n">encoding</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">encoding_2d</span> <span class="o">=</span> <span class="n">EMBEDDER_2D</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="n">encoding_5d</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Create new row to append to dataframe</span>
+        <span class="n">new_row</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;display_text&quot;</span><span class="p">:</span> <span class="n">req</span><span class="p">[</span><span class="s2">&quot;claim&quot;</span><span class="p">],</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;#000000&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">encoding_2d</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">encoding_2d</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">}</span>
+
+    <span class="k">for</span> <span class="n">keyword</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">:</span>
+
+        <span class="n">plots_list</span><span class="p">[</span><span class="n">keyword</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="c1"># Get the data that corresponds to the current keyword</span>
+        <span class="k">if</span> <span class="n">keyword</span> <span class="o">==</span> <span class="s2">&quot;All&quot;</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">keywords</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">df_sub</span> <span class="o">=</span> <span class="n">df_ALL</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">responses</span><span class="p">[</span><span class="n">keyword</span><span class="p">])</span>
+            <span class="n">df_sub</span> <span class="o">=</span> <span class="n">preprocess_data</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+            <span class="c1"># Merge the Topic, color and size fields obtained above from df_ALL with the data for the current keyword</span>
+            <span class="n">df_sub</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_sub</span><span class="p">,</span> <span class="n">df_ALL</span><span class="p">[[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;Topic&quot;</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">]],</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;inner&quot;</span><span class="p">)</span>
+
+        <span class="n">mapping</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;All sentiments&#39;</span><span class="p">:</span> <span class="s1">&#39;All Sentiments&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Positive&#39;</span><span class="p">:</span> <span class="s1">&#39;Positive&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Negative&#39;</span><span class="p">:</span> <span class="s1">&#39;Negative&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Neutral&#39;</span><span class="p">:</span> <span class="s1">&#39;Neutral&#39;</span><span class="p">}</span>
+
+        <span class="c1"># Generate the Topic Discovery scatter plot for each sentiment</span>
+        <span class="k">for</span> <span class="n">sentiment</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;All sentiments&#39;</span><span class="p">,</span> <span class="s1">&#39;Positive&#39;</span><span class="p">,</span> <span class="s1">&#39;Negative&#39;</span><span class="p">,</span> <span class="s1">&#39;Neutral&#39;</span><span class="p">]:</span>
+
+            <span class="k">if</span> <span class="n">sentiment</span> <span class="o">==</span> <span class="s1">&#39;All sentiments&#39;</span><span class="p">:</span>
+                <span class="n">df_rel</span> <span class="o">=</span> <span class="n">df_sub</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">df_rel</span> <span class="o">=</span> <span class="n">df_sub</span><span class="p">[</span><span class="n">df_sub</span><span class="p">[</span><span class="s2">&quot;sentiment&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">sentiment</span><span class="p">]</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Nb tweets:&quot;</span><span class="p">,</span> <span class="n">keyword</span><span class="p">,</span> <span class="n">sentiment</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_rel</span><span class="p">))</span>
+
+            <span class="c1"># Add the datapoint for the &quot;claim&quot; query argument onto the scatter plot</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">new_row</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">df_rel</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df_rel</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">new_row</span><span class="p">])])</span>
+
+            <span class="c1"># If tweets are labelled with topics, generate the TF-IDF info for each topic (for topic wordclouds)</span>
+            <span class="k">if</span> <span class="n">req</span><span class="p">[</span><span class="s2">&quot;nb_topics&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">top_words</span><span class="p">[</span><span class="n">keyword</span><span class="p">][</span><span class="n">mapping</span><span class="p">[</span><span class="n">sentiment</span><span class="p">]]</span> <span class="o">=</span> <span class="n">get_tf_idf</span><span class="p">(</span><span class="n">df_rel</span><span class="p">)</span>
+
+            <span class="c1"># Append scatter plot to empty results object</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_rel</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">plot</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">bokeh_cmap_cop</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">bokeh_cmap</span><span class="p">)</span>
+                <span class="n">plot</span> <span class="o">=</span> <span class="n">json_item</span><span class="p">(</span><span class="n">get_plot</span><span class="p">(</span><span class="n">df_rel</span><span class="p">,</span> <span class="n">bokeh_cmap</span><span class="o">=</span><span class="n">bokeh_cmap_cop</span><span class="p">))</span>
+
+            <span class="n">plots_list</span><span class="p">[</span><span class="n">keyword</span><span class="p">][</span><span class="n">mapping</span><span class="p">[</span><span class="n">sentiment</span><span class="p">]]</span> <span class="o">=</span> <span class="n">plot</span>
+
+    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">...time = </span><span class="si">%.1f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s2">&quot;figures&quot;</span><span class="p">:</span> <span class="n">plots_list</span><span class="p">,</span> <span class="s2">&quot;top_words&quot;</span><span class="p">:</span> <span class="n">top_words</span><span class="p">})</span></div>
+
+
+
+<span class="n">print_this</span><span class="p">(</span><span class="n">countries</span><span class="p">)</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;main&quot;</span><span class="p">:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">SocioXplorer Dashboard</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">api</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Sandrine Chausson, Youssef Al Hariri, Bjorn Ross.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
