@@ -156,8 +156,8 @@ The following commands assume that you are in the terminal, inside the folder `s
       
       A sample of expected tweet objects is included in the root folder of this repository. To clarify the supported formats, we provide two example files:
 
-      - `socioxplorer/sample_tweets.json`: Contains multiple JSON objects, each on a single line (newline-delimited JSON, or "JSONL" format).
-      - `socioxplorer/sample_tweets2.json`: Contains multiple JSON objects, each possibly spanning multiple lines and formatted with indentation, as typically retrieved from the X (Twitter) platform API V2.
+      - `socioxplorer/sample_data/sample_tweets.json`: Contains multiple JSON objects, each on a single line (newline-delimited JSON, or "JSONL" format).
+      - `socioxplorer/sample_data/sample_tweets2.json`: Contains multiple JSON objects, each possibly spanning multiple lines and formatted with indentation, as typically retrieved from the X (Twitter) platform API V2.
       
       These tweets were originally published on [X's developer's page](https://docs.x.com/x-api/posts/search/quickstart/full-archive-search) and in the article [Understanding the new Tweet payload in the Twitter API v2](https://dev.to/xdevs/understanding-the-new-tweet-payload-in-the-twitter-api-v2-1fg5). The system can process both formats automatically.
 
