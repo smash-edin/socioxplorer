@@ -25,7 +25,7 @@ Before start with the interface, please check that your system has the following
     To install yarn follow these two commands:
         
     ```shell
-    nvm install 20.5.0
+    npm install 20.5.0
     npm install --global yarn
     ```
 
