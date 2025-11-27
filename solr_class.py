@@ -658,7 +658,7 @@ class SolrClass:
 
         facet_url = str(self.solrs[solr_core]) +  \
             f"select?random_{random_number}" + \
-            f"&sort=embedding_2d%20desc%2C{interactionCommunity}%20desc%2CretweetCount%20desc%2CreplyCount%20desc&fl=id%2C%20videoId%2C%20fullText%2C%20embedding_5d%2C%20embedding_2d%2C%20sentiment%2C%20replyCommunity%2C%20retweetCommunity%2C%20" + \
+            f"&sort={interactionCommunity}%20desc%2CretweetCount%20desc%2CreplyCount%20desc&fl=id%2C%20videoId%2C%20fullText%2C%20embedding_5d%2C%20embedding_2d%2C%20sentiment%2C%20replyCommunity%2C%20retweetCommunity%2C%20" + \
             "&q.op=OR&q=" + term_q + \
             (f"%20AND%20{interactionCommunity}:(" + "%20OR%20".join(communitiesList) + ")" if communitiesList != None and len(communitiesList)>0 and type(communitiesList) == list and interactionCommunity != None and interactionCommunity in ["retweetCommunity","replyCommunity"] else "") + \
             "&rows=" + str(int(1.1*rows)) + "&indent=true"

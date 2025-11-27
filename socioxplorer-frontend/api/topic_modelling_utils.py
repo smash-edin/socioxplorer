@@ -411,7 +411,7 @@ def update_bokeh_plot(plot_json, topic_mapping):
 
     # Update the data source with new topic values
     new_data = datasource.data.copy()
-    new_data['Topic'] = [topic_mapping[str(old_topic)] if old_topic == old_topic else "No topic" for old_topic in new_data['Topic']]
+    new_data['Topic'] = [topic_mapping[str(old_topic)] if (old_topic is not None) else "No topic" for old_topic in new_data['Topic']]
 
     # Update the datasource
     datasource.data = new_data
